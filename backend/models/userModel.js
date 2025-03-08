@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
     },
     location: {
       type: String,
-      required: true, // City or Area
+      required: true,
     },
     latitude: {
       type: Number,
@@ -67,16 +67,16 @@ const userSchema = new mongoose.Schema(
     },
     lookingForRoommate: {
       type: Boolean,
-      default: false, // Default: Not looking for a roommate
+      default: false, 
     },
     photo: {
       type: String,
-      default: "default.jpg", // Store the file path or URL
+      default: "default.jpg", 
     },
   },
   {
-    timestamps: true, // ✅ Merged options
-    collection: "users", // ✅ Explicitly specify collection name
+    timestamps: true, 
+    collection: "users", 
   }
 );
 //encrypting the password

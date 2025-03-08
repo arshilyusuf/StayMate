@@ -10,7 +10,7 @@ function Notification({ senderId, senderName, requestId, onDelete }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/profile/${senderId}`); // Redirects to sender's profile page
+    navigate(`/profile/${senderId}`); 
   };
 
   const handleDeleteRequest = async () => {
@@ -87,7 +87,6 @@ export default function Notifications() {
     fetchNotifications();
   }, []);
 
-  // Function to remove notification from state after decline
   const handleDeleteNotification = (requestId) => {
     setNotifications((prev) => prev.filter((notif) => notif._id !== requestId));
   };

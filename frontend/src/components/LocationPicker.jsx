@@ -3,21 +3,22 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import styles from "./LocationPicker.module.css";
 import "leaflet/dist/leaflet.css";
 import { AuthContext } from "../context/AuthContext";
-const LocationPicker = ({ onSelectLocation, onClose }) => {
+const LocationPicker = ({ onSelectLocation, onClose, defLat=20, defLong=70 }) => {
   const [selectedPosition, setSelectedPosition] = useState(null);
       const {user} = useContext(AuthContext)
   const handleConfirm = () => {
     if (selectedPosition) {
-      onSelectLocation(selectedPosition); // Send selected location back
+      onSelectLocation(selectedPosition); 
     }
     onClose();
   };
+  const position = user?[user.latitude, user.longitude]:[defLat, defLong]
 
   return (
     <div className={styles.overlay}>
       <div className={styles.mapContainer}>
         <MapContainer
-          center={ [user.latitude,user.longitude]} // Default location (India)
+          center={position} 
           zoom={12}
           style={{ height: "100%", width: "100%" }}
         >

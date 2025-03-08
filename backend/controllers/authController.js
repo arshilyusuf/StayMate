@@ -46,11 +46,9 @@ exports.signup = catchAsync(async (req, res) => {
 
 exports.login = catchAsync(async (req,res,next)=>{
   const {email, password} = req.body
-  //checking if it exists
   if(!email || !password){
     return next(new AppError('Please provide email and password',400))
   }
-  //check if user exists and password is correct
   const user = await User.findOne({email}).select('+password')
 
   
@@ -58,13 +56,12 @@ exports.login = catchAsync(async (req,res,next)=>{
     return next(new AppError('Incorrect email or password',401))
   }
 user.password = undefined;
-  //send token
   const token = signToken(user._id);
   res
     .cookie("jwt", token, {
       httpOnly: true,
-      secure: false, // Set to false for localhost testing
-      sameSite: "strict", // Ensure CSRF protection
+      secure: false, 
+      sameSite: "strict", 
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
@@ -86,7 +83,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/"); 
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+    cb(null, Date.now() + path.extname(file.originalname)); 
   },
 });
 const upload = multer({ storage: storage });
@@ -112,7 +109,6 @@ exports.update = catchAsync(async (req, res, next) => {
     );
   }
 
-  // Create an object with only provided fields
   const updates = {};
   allowedFields.forEach((field) => {
     if (req.body[field] !== undefined) {
@@ -120,33 +116,28 @@ exports.update = catchAsync(async (req, res, next) => {
     }
   });
 
-  // Handle profile picture upload
   if (req.body.photo === "https://avatar.iran.liara.run/public/41") {
-    // If the frontend requests a reset, update with the default avatar URL
     updates.photo = "https://avatar.iran.liara.run/public/41";
   } else if (req.file) {
-    // If a new file is uploaded, update with the file URL
     updates.photo = `${req.protocol}://${req.get("host")}/uploads/${
       req.file.filename
     }`;
   }
 
-  // Optional: Prevent email updates for security reasons
   if (req.body.email && req.body.email !== req.user.email) {
     return next(new AppError("Email updates are not allowed", 403));
   }
 
-  // Update user in the database
   const updatedUser = await User.findByIdAndUpdate(req.user._id, updates, {
     new: true,
     runValidators: true,
-  }).select("-password"); // Exclude password from response
+  }).select("-password"); 
 
   if (!updatedUser) {
     return next(new AppError("User not found", 404));
   }
 
-  console.log("✅ User updated:", updatedUser);
+  console.log("User updated:", updatedUser);
 
   res.status(200).json({
     status: "Profile Updated Successfully!",
@@ -154,5 +145,4 @@ exports.update = catchAsync(async (req, res, next) => {
   });
 });
 
-// Middleware to handle file upload before the update function
 exports.uploadPhoto = upload.single("photo");

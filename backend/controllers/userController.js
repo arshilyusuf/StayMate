@@ -1,8 +1,8 @@
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 exports.getAllUsers = catchAsync(async (req, res) => {
-  const users = await User.find(); // Fetch all users
-  console.log("🔹 Retrieved Users:", users); // Debugging
+  const users = await User.find();
+  console.log(" Retrieved Users:", users); 
 
   if (users.length === 0) {
     console.log("⚠️ No users found in the database.");
@@ -13,7 +13,7 @@ exports.getAllUsers = catchAsync(async (req, res) => {
     data: {
       length: users.length,
       users,
-    }, // Return users directly
+    }, 
   });
 });
 exports.getUser = (req, res) => {
@@ -24,7 +24,6 @@ exports.getUser = (req, res) => {
 };
 exports.createUser = async (req, res) => {
   try {
-    // Create a new user with the request body data
     const newUser = await User.create(req.body);
     res.status(201).json({
       status: "success",

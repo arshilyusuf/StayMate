@@ -8,9 +8,8 @@ const RoomSchema = new mongoose.Schema(
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
     price: { type: Number, required: true },
-    amenities: { type: [String], default: [] }, // Array of strings
     availability: { type: Boolean, default: true },
-    photos: { type: [String], default: [] }, // Array of image URLs
+    photos: { type: [String], default: [] }, 
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

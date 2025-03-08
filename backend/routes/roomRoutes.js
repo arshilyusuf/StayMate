@@ -1,13 +1,22 @@
 const express = require("express");
 const Room = require("../models/roomModel");
 const router = express.Router();
-const multer= require('multer')
+const multer = require("multer");
+const path = require("path");
 
-const upload = multer({ storage: multer.memoryStorage() });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); 
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); 
+  },
+});
+
+const upload = multer({ storage: storage });
 
 router.post("/", upload.array("photos", 4), async (req, res) => {
   try {
-    // Ensure required fields are present
     const {
       title,
       description,
@@ -15,7 +24,6 @@ router.post("/", upload.array("photos", 4), async (req, res) => {
       latitude,
       longitude,
       price,
-      amenities,
       owner,
     } = req.body;
 
@@ -28,18 +36,14 @@ router.post("/", upload.array("photos", 4), async (req, res) => {
       !price ||
       !owner
     ) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "All required fields must be filled.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "All required fields must be filled.",
+      });
     }
 
-    // Convert amenities from string to array
-    const amenitiesArray = amenities
-      ? amenities.split(",").map((a) => a.trim())
-      : [];
+   
+    const photoPaths = req.files.map((file) => `uploads/${file.filename}`);
 
     const newRoom = new Room({
       title,
@@ -48,9 +52,8 @@ router.post("/", upload.array("photos", 4), async (req, res) => {
       latitude,
       longitude,
       price,
-      amenities: amenitiesArray,
       owner,
-      photos: req.files.map((file) => file.buffer.toString("base64")), // Storing images as base64 (consider using cloud storage)
+      photos: photoPaths, 
     });
 
     await newRoom.save();
@@ -60,25 +63,26 @@ router.post("/", upload.array("photos", 4), async (req, res) => {
   }
 });
 
-// Get nearby rooms based on user's location
 router.get("/", async (req, res) => {
   try {
     let query = {};
 
-    // Filtering by price
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 5; 
+    const skip = (page - 1) * limit;
+
     if (req.query.minPrice && req.query.maxPrice) {
-      query.price = { $gte: req.query.minPrice, $lte: req.query.maxPrice };
+      query.price = {
+        $gte: parseFloat(req.query.minPrice),
+        $lte: parseFloat(req.query.maxPrice),
+      };
     }
 
-    // Filtering by amenities
-    if (req.query.amenities) {
-      query.amenities = { $all: req.query.amenities.split(",") };
-    }
+    
 
-    // Filtering by location (lat, long & radius in km)
     if (req.query.latitude && req.query.longitude) {
-      const radius = req.query.radius || 10; // 
-      const earthRadius = 6371; // Earth’s radius in km
+      const radius = parseFloat(req.query.radius) || 10; 
+      const earthRadius = 6371; 
 
       query.latitude = {
         $gte: parseFloat(req.query.latitude) - radius / earthRadius,
@@ -90,17 +94,30 @@ router.get("/", async (req, res) => {
       };
     }
 
-    const rooms = await Room.find(query);
-    res.json({ success: true, rooms });
+    const rooms = await Room.find(query)
+      .populate("owner", "phone email") 
+      .skip(skip)
+      .limit(limit);
+
+    const totalRooms = await Room.countDocuments(query);
+
+    res.json({
+      success: true,
+      rooms,
+      totalPages: Math.ceil(totalRooms / limit),
+      currentPage: page,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 });
 
-
 router.get("/:id", async (req, res) => {
   try {
-    const room = await Room.findById(req.params.id);
+    const room = await Room.findById(req.params.id).populate(
+      "owner",
+      "phone email"
+    );
     if (!room) return res.status(404).json({ message: "Room not found" });
 
     res.json({ success: true, room });

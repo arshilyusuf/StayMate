@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { UsersContext } from "../context/UsersContext";
-import { AuthContext } from "../context/AuthContext"; // Import AuthContext
+import { AuthContext } from "../context/AuthContext"; 
 import styles from "./NeighborProfile.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -9,7 +9,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 export default function NeighborProfile() {
   const { id } = useParams();
   const { users } = useContext(UsersContext);
-  const { user: loggedInUser } = useContext(AuthContext); // Get logged-in user
+  const { user: loggedInUser } = useContext(AuthContext); 
   const navigate = useNavigate();
   const [requestSent, setRequestSent] = useState(false);
   const [error, setError] = useState("");
@@ -28,7 +28,7 @@ export default function NeighborProfile() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Send token for authentication
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           senderId: loggedInUser._id,
@@ -58,7 +58,6 @@ export default function NeighborProfile() {
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
 
-        {/* Left Section - Profile Picture */}
         <div className={styles.leftSection}>
           <img
             src={user.photo || "https://avatar.iran.liara.run/public/41"}
@@ -74,7 +73,6 @@ export default function NeighborProfile() {
           <p className={styles.occupation}>{user.occupation}</p>
         </div>
 
-        {/* Right Section - Details */}
         <div className={styles.rightSection}>
           <div className={styles.inputGroup}>
             <label className={styles.boldLabel}>Email</label>
@@ -115,7 +113,7 @@ export default function NeighborProfile() {
             </button>
           </div>
 
-          {/* Show error message if any */}
+         
         </div>
       </div>
     </div>

@@ -2,8 +2,16 @@ import { useState } from "react";
 import LocationPicker from "./LocationPicker";
 import styles from "./SetLocationButton.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot, faMapLocationDot } from "@fortawesome/free-solid-svg-icons";
-const SetLocationButton = ({ setUserData, isEditing }) => {
+import {
+  faLocationDot,
+  faMapLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
+const SetLocationButton = ({
+  setUserData,
+  isEditing,
+  defLat = 20,
+  defLong = 70,
+}) => {
   const [showMap, setShowMap] = useState(false);
 
   const handleUseMyLocation = () => {
@@ -62,6 +70,8 @@ const SetLocationButton = ({ setUserData, isEditing }) => {
           <LocationPicker
             onSelectLocation={handleLocationConfirm}
             onClose={() => setShowMap(false)}
+            defLat={defLat}
+            defLong={defLong}
           />
         )}
       </div>

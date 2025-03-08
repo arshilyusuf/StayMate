@@ -2,14 +2,20 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./PostProperty.module.css";
 import { AuthContext } from "../context/AuthContext";
+import { RoomsContext } from "../context/RoomsContext"; // ✅ Import RoomsContext
 import NavBar from "../components/NavBar";
 import LocationPicker from "../components/LocationPicker";
-import { faXmark, faLocationDot, faMapLocationDot } from "@fortawesome/free-solid-svg-icons";
+import {
+  faXmark,
+  faLocationDot,
+  faMapLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function PostProperty() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
+  const { setRooms, setLoading } = useContext(RoomsContext); // ✅ Get setRooms to update state
   const [showMap, setShowMap] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -19,7 +25,6 @@ function PostProperty() {
     latitude: "",
     longitude: "",
     price: "",
-    amenities: "",
     availability: true,
     photos: [],
   });
@@ -30,6 +35,10 @@ function PostProperty() {
 
     if (name === "price" && value < 0) {
       newValue = 0;
+    }
+
+    if (name === "amenities" && typeof value !== "string") {
+      newValue = String(value);
     }
 
     setFormData({
@@ -95,60 +104,58 @@ function PostProperty() {
     setShowMap(false);
   };
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
-   if (!user || !user._id) {
-     alert("You must be logged in to post a property.");
-     return;
-   }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!user) {
+      alert("You must be logged in to post a property.");
+      return;
+    }
 
-   try {
-     const formDataToSend = new FormData();
-     formDataToSend.append("title", formData.title);
-     formDataToSend.append("description", formData.description);
-     formDataToSend.append("location", formData.location);
-     formDataToSend.append("latitude", formData.latitude);
-     formDataToSend.append("longitude", formData.longitude);
-     formDataToSend.append("price", formData.price);
-     formDataToSend.append("availability", formData.availability);
-     formDataToSend.append("owner", user._id);
+    try {
+      setLoading(true)
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("description", formData.description);
+      formDataToSend.append("location", formData.location);
+      formDataToSend.append("latitude", formData.latitude);
+      formDataToSend.append("longitude", formData.longitude);
+      formDataToSend.append("price", formData.price);
+      formDataToSend.append("availability", formData.availability);
+      formDataToSend.append("owner", user._id);
 
-     if (typeof formData.amenities === "string") {
-       formData.amenities
-         .split(",")
-         .map((a) => a.trim())
-         .filter((a) => a)
-         .forEach((amenity) => formDataToSend.append("amenities", amenity));
-     }
+      formData.photos.forEach(({ file }) => {
+        formDataToSend.append("photos", file);
+      });
 
+      const response = await fetch("http://localhost:8000/rooms", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formDataToSend,
+      });
 
+      const data = await response.json();
+      console.log("Backend Response:", data); 
 
-     formData.photos.forEach(({ file }) => {
-       formDataToSend.append("photos", file);
-     });
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to post property");
+      }
 
-     console.log("Sending Data:", Object.fromEntries(formDataToSend.entries())); // Debugging
+      alert("Property posted successfully!");
 
-     const response = await fetch("http://localhost:8000/rooms", {
-       method: "POST",
-       headers: {
-         Authorization: `Bearer ${localStorage.getItem("token")}`,
-       },
-       body: formDataToSend,
-     });
-
-     const data = await response.json();
-     if (!response.ok)
-       throw new Error(data.message || "Failed to post property");
-
-     alert("Property posted successfully!");
-     navigate("/rooms");
-   } catch (error) {
-     console.error("Error posting property:", error);
-     alert(error.message);
-   }
- };
-
+      setRooms((prevRooms) => [
+        { ...data.room, owner: user }, 
+        ...prevRooms,
+      ]);
+      navigate("/room");
+    } catch (error) {
+      console.error("Error posting property:", error.message);
+      alert(error.message);
+    }finally{
+      setLoading(false)
+    }
+  };
 
   return (
     <>
@@ -196,16 +203,7 @@ function PostProperty() {
             required
           />
 
-          <label>Amenities</label>
-          <input
-            type="text"
-            name="amenities"
-            placeholder="Amenities (comma-separated)"
-            value={formData.amenities}
-            onChange={handleChange}
-          />
           <div className={styles.position}>
-            {/* Display Location Coordinates */}
             <div className={styles.posInput}>
               <label>Latitude</label>
               <input
@@ -225,6 +223,7 @@ function PostProperty() {
                 readOnly
               />
             </div>
+
             <div className={styles.buttons}>
               <button
                 type="button"
@@ -242,7 +241,7 @@ function PostProperty() {
               </button>
             </div>
           </div>
-          {/* File Upload */}
+
           <input
             type="file"
             accept="image/*"
@@ -255,7 +254,6 @@ function PostProperty() {
             Upload Photos
           </label>
 
-          {/* Display Image Previews */}
           <div className={styles.photoPreviewContainer}>
             {formData.photos.map((photo, index) => (
               <div key={index} className={styles.photoPreview}>
@@ -271,8 +269,6 @@ function PostProperty() {
             ))}
           </div>
 
-          {/* Location Buttons */}
-
           {showMap && (
             <LocationPicker
               onSelectLocation={handleLocationConfirm}
@@ -280,7 +276,9 @@ function PostProperty() {
             />
           )}
 
-          <button className={styles.post} type="submit">Post Property</button>
+          <button className={styles.post} type="submit">
+            Post Property
+          </button>
         </form>
       </div>
     </>

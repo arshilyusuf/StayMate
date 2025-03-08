@@ -28,7 +28,7 @@
   color: rgb(36, 36, 36);
   padding: 1rem;
   border-radius: 8px;
-  background: rgba(95, 158, 160, 0.2); /* Light cadet blue */
+  background: rgba(95, 158, 160, 0.2); 
   width: auto;
 }
 
@@ -50,7 +50,6 @@
   cursor: pointer;
 }
 
-/* Styling for Apply Filters Button */
 .searchByFilter button {
   background: cadetblue;
   color: white;
@@ -68,7 +67,6 @@
 .searchByFilter h4{
   font-size: 2rem;
 }
-/* Responsive Design */
 @media (max-width: 768px) {
   .searchByFilter {
     flex-direction: column;

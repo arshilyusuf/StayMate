@@ -1,12 +1,11 @@
-/* Full-screen overlay for the map */
 
 .overlay {
   position: fixed;
  top:0;
  left: 0;
-  width: 100%;  /* Fix: Use 100% instead of 100vw */
+  width: 80%; 
   height: 100vh;
-  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background: rgba(0, 0, 0, 0.5); 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -15,7 +14,6 @@
   border-radius: 1rem;
 }
 
-/* Map container */
 .mapContainer {
   width: 90%;
   height: 90%;
@@ -28,7 +26,7 @@
 }
 
 
-/* Container for the map */
+
 .mapContainer {
   width: 80%;
   height: 80%;
@@ -40,7 +38,6 @@
   position: relative;
 }
 
-/* Controls container */
 .controls {
   display: flex;
   justify-content: space-around;
@@ -49,7 +46,6 @@
   border-top: 1px solid #ddd;
 }
 
-/* Button styles (same as your reference button) */
 .confirmButton,
 .cancelButton {
   height: fit-content;
@@ -64,7 +60,6 @@
   text-align: center;
 }
 
-/* Confirm button */
 .confirmButton {
   background-color: #383838;
   color: rgb(240, 240, 240);
@@ -74,7 +69,6 @@
   background-color: #0056b3;
 }
 
-/* Cancel button */
 .cancelButton {
   background-color: rgb(197, 68, 68);
   color: white;

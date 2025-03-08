@@ -11,7 +11,7 @@ export default function NearList() {
   const { user } = useContext(AuthContext);
 
   function getDistance(lat1, lon1, lat2, lon2) {
-    const earthRadius = 6371; // Radius of Earth in km
+    const earthRadius = 6371; 
 
     function toRadians(degrees) {
       return (degrees * Math.PI) / 180;
@@ -30,7 +30,7 @@ export default function NearList() {
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return earthRadius * c; // Distance in km
+    return earthRadius * c; 
   }
 
   const neighborList = users.filter(

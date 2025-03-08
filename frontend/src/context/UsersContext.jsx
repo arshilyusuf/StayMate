@@ -13,7 +13,7 @@ export function UsersProvider({ children }) {
       setError(null);
       const response = await fetch("http://localhost:8000/users", {
         method: "GET",
-        credentials: "include", // Ensure cookies are sent with the request
+        credentials: "include", 
       });
       if (!response.ok) throw new Error("Failed to fetch users");
       const data = await response.json();

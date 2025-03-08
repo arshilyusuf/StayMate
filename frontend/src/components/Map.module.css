@@ -5,7 +5,7 @@
   border-radius: 1rem;
   overflow: hidden;
   margin-top: 2rem;
-  position: relative; /* Helps prevent layout shifts */
+  position: relative; 
 }
 
 .map {

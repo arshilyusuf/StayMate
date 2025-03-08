@@ -4,7 +4,7 @@ const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 
 exports.protect = async (req, res, next) => {
-  const token = req.cookies?.jwt; // Get token from cookies
+  const token = req.cookies?.jwt; 
 console.log("Headers received:", req.headers);
 
   if (!token) {

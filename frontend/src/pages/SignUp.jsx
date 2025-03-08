@@ -2,9 +2,15 @@ import { useState, useContext } from "react";
 import styles from "./SignUp.module.css";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import SetLocationButton from "../components/SetLocationButton"; 
+
 function SignUp() {
   const navigate = useNavigate();
-  const {setLoggedIn} = useContext(AuthContext)
+  const { setLoggedIn, setUser } = useContext(AuthContext);
+  const [userCoordinates, setUserCoordinates] = useState({
+    latitude: 28.7041,
+    longitude: 77.1025,
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,16 +25,25 @@ function SignUp() {
     latitude: "",
     longitude: "",
     lookingForRoommate: false,
-    photo: "",
+    photo: "https://avatar.iran.liara.run/public/41", 
   });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+
+    if (name === "photo" && !value) {
+      setFormData({
+        ...formData,
+        [name]: "https://avatar.iran.liara.run/public/41", 
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: type === "checkbox" ? checked : value,
+      });
+    }
   };
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -40,68 +55,71 @@ function SignUp() {
       reader.readAsDataURL(file);
     }
   };
-  const handleSetLocation = () => {
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (formData.password !== formData.passwordConfirm) {
+    alert("Passwords do not match");
+    return;
+  }
+
+  const formDataToSend = {
+    ...formData,
+    photo: formData.photo || "https://avatar.iran.liara.run/public/41",
+  };
+
+  try {
+    const response = await fetch("http://localhost:8000/users/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formDataToSend),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Signup failed");
+    }
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.data.user)); 
+
+    alert("Signup successful!");
+    setLoggedIn(true); 
+    setUser(data.data.user); 
+
+    navigate("/"); 
+  } catch (error) {
+    console.error("Error signing up:", error);
+    alert(error.message);
+  }
+};
+
+
+
+  const getUserCoordinates = (setUserCoordinates) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setFormData((prev) => ({
-            ...prev,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          }));
+          const { latitude, longitude } = position.coords;
+          setUserCoordinates({
+            latitude,
+            longitude,
+          });
         },
         (error) => {
-          console.error("Error getting location:", error);
-          alert("Unable to retrieve location. Please enable location access.");
+          console.error("Error getting location: ", error);
+          alert("Unable to retrieve your location. Please try again.");
         }
       );
     } else {
       alert("Geolocation is not supported by your browser.");
     }
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Ensure passwords match before sending request
-    if (formData.password !== formData.passwordConfirm) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    // Ensure default photo is set if none is provided
-    const formDataToSend = {
-      ...formData,
-      photo: formData.photo || "https://avatar.iran.liara.run/public/41",
-    };
-
-    try {
-      const response = await fetch("http://localhost:8000/users/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formDataToSend),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Signup failed");
-      }
-
-      // Store JWT token & update auth state
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data.data.user)); // Store user data
-      alert("Signup successful!");
-      setLoggedIn(true);
-      navigate("/"); // Redirect to home page
-    } catch (error) {
-      console.error("Error signing up:", error);
-      alert(error.message);
-    }
-  };
-
+  getUserCoordinates(setUserCoordinates);
 
   return (
     <div className={styles.userContainer}>
@@ -116,7 +134,7 @@ function SignUp() {
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          className={styles.fileInput} // Hide the input field
+          className={styles.fileInput} 
           id="upload-photo"
         />
         <label htmlFor="upload-photo" className={styles.uploadButton}>
@@ -223,6 +241,8 @@ function SignUp() {
             <option value="non-vegetarian">Non-Vegetarian</option>
           </select>
         </div>
+
+        {/* Location Fields */}
         <div className={styles.inputGroup}>
           <label>Location</label>
           <input
@@ -255,13 +275,12 @@ function SignUp() {
           />
         </div>
 
-        <button
-          type="button"
-          className={styles.button}
-          onClick={handleSetLocation}
-        >
-          Set Location
-        </button>
+        <SetLocationButton
+          setUserData={setFormData}
+          isEditing={true}
+          defLat={userCoordinates.latitude}
+          defLong={userCoordinates.longitude}
+        />
 
         <div className={styles.roommate}>
           <h3>Looking for Roommate?</h3>
@@ -272,6 +291,7 @@ function SignUp() {
             onChange={handleChange}
           />
         </div>
+
         <button type="submit" className={styles.submit}>
           Sign Up
         </button>

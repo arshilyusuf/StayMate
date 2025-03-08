@@ -3,7 +3,7 @@ import styles from "./User.module.css";
 import NavBar from "../components/NavBar";
 import Notifications from "../components/Notifications";
 import { AuthContext } from "../context/AuthContext";
-import SetLocationButton from "../components/SetLocationButton"; // Import the new component
+import SetLocationButton from "../components/SetLocationButton"; 
 import { useNavigate } from "react-router-dom";
 
 function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
@@ -25,7 +25,6 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
     }
   }, [user]);
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -37,10 +36,8 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
     }
   };
 
-  // Handle file selection for photo upload
   const handlePhotoChange = (e, isReset = false) => {
     if (isReset) {
-      // Reset case: Set to default avatar
       setPhotoFile(null);
       setPreviewPhoto(DEFAULT_AVATAR);
     } else {
@@ -48,7 +45,7 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
       const file = e.target.files[0];
       if (file) {
         setPhotoFile(file);
-        setPreviewPhoto(URL.createObjectURL(file)); // Show preview
+        setPreviewPhoto(URL.createObjectURL(file)); 
       }
     }
   };
@@ -58,7 +55,6 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
     navigate("/");
   };
 
-  // Handle form submission (Save button)
   const handleSave = async () => {
     try {
       console.log("Entered function");
@@ -75,11 +71,10 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
       formData.append("lookingForRoommate", looking);
       formData.append("phone", userData.phone);
 
-      // Check if the user reset the photo
       if (previewPhoto === DEFAULT_AVATAR) {
-        formData.append("photo", DEFAULT_AVATAR); // Send the default avatar URL
+        formData.append("photo", DEFAULT_AVATAR); 
       } else if (photoFile) {
-        formData.append("photo", photoFile); // Append the new photo if uploaded
+        formData.append("photo", photoFile); 
       }
 
       const response = await fetch("http://localhost:8000/users/update", {
@@ -116,7 +111,6 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
         setShowChat={setShowChat}
       />
       <div className={styles.userContainer}>
-        {/* Left Section - Profile Picture & Name */}
         <div className={styles.leftSection}>
           <div className={styles.image}>
             <img src={previewPhoto} alt="User Profile" />
@@ -176,7 +170,6 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
           </button>
         </div>
 
-        {/* Right Section - Editable User Details */}
         <div className={styles.rightSection}>
           <div className={styles.inputGroup}>
             <label>Age</label>
@@ -258,7 +251,6 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
             </select>
           </div>
 
-          {/* Latitude and Longitude Fields */}
           <div className={styles.position}>
             <div className={styles.coordinates}>
               <div className={styles.inputGroup}>
@@ -268,8 +260,8 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
                   name="latitude"
                   className={styles.inputField}
                   value={userData.latitude}
-                  onChange={handleChange} // Add this line
-                  disabled={!isEditing} // Prevent editing when not in edit mode
+                  onChange={handleChange} 
+                  disabled={!isEditing} 
                 />
               </div>
 
@@ -280,19 +272,17 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
                   name="longitude"
                   className={styles.inputField}
                   value={userData.longitude}
-                  onChange={handleChange} // Add this line
-                  disabled={!isEditing} // Prevent editing when not in edit mode
+                  onChange={handleChange} 
+                  disabled={!isEditing} 
                 />
               </div>
             </div>
 
-            {/* Set Location Button */}
 
             <SetLocationButton setUserData={setUserData} isEditing={isEditing}/>
           </div>
 
           <div className={styles.buttons}>
-            {/* Edit/Save Button */}
             <button
               className={styles.editButton}
               onClick={() => (isEditing ? handleSave() : setIsEditing(true))}
@@ -309,9 +299,9 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
               >
                 <p
                   onClick={() => {
-                    setUserData(user); // Reset form data to the original user state
-                    setPreviewPhoto(user?.photo || DEFAULT_AVATAR); // Reset photo preview
-                    setIsEditing(false); // Exit edit mode
+                    setUserData(user); 
+                    setPreviewPhoto(user?.photo || DEFAULT_AVATAR); 
+                    setIsEditing(false); 
                   }}
                 >
                   Cancel

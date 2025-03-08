@@ -20,7 +20,7 @@ export default function FilterList({ users }) {
         className={styles.nearList}
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)", // Ensures 2 columns
+          gridTemplateColumns: "repeat(2, 1fr)", 
           gap: "0.5rem",
           padding: "0.5rem",
           marginTop: "0.5rem",

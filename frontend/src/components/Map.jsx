@@ -153,7 +153,6 @@ export default function Map({ filteredUsers }) {
   );
 }
 
-// Component to detect clicks on the map and close the popup
 function DetectMapClick({ onClick }) {
   useMapEvents({
     click: onClick,
@@ -161,7 +160,6 @@ function DetectMapClick({ onClick }) {
   return null;
 }
 
-// Reset Location Button Component
 function ResetLocationButton({ position }) {
   const map = useMap();
   return (
@@ -186,7 +184,6 @@ function ResetLocationButton({ position }) {
   );
 }
 
-// Small Neighbor Popup Component
 function NeighborPopup({ user }) {
   const navigate = useNavigate();
   return (
@@ -210,7 +207,6 @@ function NeighborPopup({ user }) {
         navigate(`/profile/${user._id}`);
       }}
     >
-      {/* Profile Image */}
       <img
         src={user.photo || "https://via.placeholder.com/60"}
         alt="Profile"
@@ -222,7 +218,6 @@ function NeighborPopup({ user }) {
         }}
       />
 
-      {/* User Details */}
       <div style={{ flex: 1 }}>
         <h4 style={{ margin: "0 0 5px", fontSize: "1.1rem" }}>
           {user.name}, {user.age}

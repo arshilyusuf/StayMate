@@ -1,29 +1,96 @@
-import { useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import styles from "./Room.module.css";
 import NavBar from "../components/NavBar";
 import Notifications from "../components/Notifications";
 import { RoomsContext } from "../context/RoomsContext";
+import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
+import NoResultsFound from "../components/NoResultsFound";
+import SearchRoomsFilter from "../components/SearchRoomsFilter";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 
-function RoomItem({ image, name, price, capacity, description, phone, email }) {
+const DEFAULT_AVATAR = "https://avatar.iran.liara.run/public/41";
+
+function RoomItem({
+  image,
+  name,
+  price,
+  description,
+  owner,
+  isMyProperty,
+  onDelete,
+}) {
+  const imageUrl = image ? `http://localhost:8000/${image}` : DEFAULT_AVATAR;
+
   return (
     <div className={styles.roomItem}>
       <div>
-        <img src={image} alt={name} />
+        <img src={imageUrl} alt={name} />
       </div>
       <div className={styles.details}>
         <div className={styles.leftSection}>
           <h3>{name}</h3>
           <h4>${price}</h4>
-          <h6>Capacity: {capacity}</h6>
           <p>{description}</p>
         </div>
-        <div className={styles.rightSection}>
-          <button className={styles.contactButton}>
-            <p>Phone: {phone}</p>
-            <p>Email: {email}</p>
-          </button>
-        </div>
+          <div className={styles.rightSection}>
+            {isMyProperty ? (
+              <button className={styles.removeButton} onClick={onDelete}>
+                Remove
+              </button>
+            ) : (
+              <button className={styles.contactButton}>
+                <p>Phone: {owner?.phone || "N/A"}</p>
+                <p>Email: {owner?.email || "N/A"}</p>
+              </button>
+            )}
+          </div>
+      </div>
+    </div>
+  );
+}
+
+function RoomDetailsModal({ room, onClose }) {
+  if (!room) return null;
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.closeButton} onClick={onClose}>
+          ×
+        </button>
+        <h2>{room.title}</h2>
+        <img
+          src={
+            room.photos?.[0]
+              ? `http://localhost:8000/${room.photos[0]}`
+              : DEFAULT_AVATAR
+          }
+          alt={room.title}
+        />
+        <p>
+          <strong>Price:</strong> ${room.price} per month
+        </p>
+        <p>
+          <strong>Description:</strong> {room.description}
+        </p>
+        <p>
+          <strong>Owner Contact:</strong> {room.owner?.email || "N/A"}
+        </p>
+        <p>
+          <strong>Phone:</strong> {room.owner?.phone || "N/A"}
+        </p>
+        <button onClick={onClose} className={styles.closeButton}>
+          Close
+        </button>
       </div>
     </div>
   );
@@ -37,8 +104,51 @@ export default function Room({
   showChat,
   setShowChat,
 }) {
-  const { rooms, setPage, loading, hasMore } = useContext(RoomsContext);
+  const { rooms, setRooms, loading } =
+    useContext(RoomsContext);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [mapPosition, setMapPosition] = useState(null);
+  const [filteredRooms, setFilteredRooms] = useState(rooms);
+
+
+  useEffect(() => {
+    if (user?.latitude && user?.longitude) {
+      setMapPosition([user.latitude, user.longitude]);
+    }
+  }, [user]);
+
+  const userRooms = rooms.filter((room) => room.owner?._id === user?._id);
+
+  const handleRemoveProperty = async (roomId) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to remove this property?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:8000/rooms/${roomId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setRooms((prevRooms) =>
+          prevRooms.filter((room) => room._id !== roomId)
+        );
+      } else {
+        alert("Failed to remove property: " + data.message);
+      }
+    } catch (error) {
+      alert("Error removing property: " + error.message);
+    }
+  };
+
+  if (!user?.latitude || !user?.longitude) return <p>Loading map...</p>;
+  if (!mapPosition) return <Loading />;
+
   return (
     <>
       <NavBar
@@ -48,49 +158,125 @@ export default function Room({
         showChat={showChat}
         setShowChat={setShowChat}
       />
-      <div className={styles.container}>
-        <div className={styles.headerSection}>
-          <h1>Places near you available for rent</h1>
-          <div className={styles.buttons}>
-            <button className={styles.Button} onClick={navigate("/rooms/post")}>
-              <p>Post Property</p>
-            </button>
-            <button className={styles.Button}>
-              <p>View My Properties</p>
-            </button>
+      <div className={styles.roomContainer}>
+        <SearchRoomsFilter rooms={rooms} setFilteredRooms={setFilteredRooms} />
+
+        <div className={styles.container}>
+          <div className={styles.headerSection}>
+            <h1>Places near you available for rent</h1>
+            <div className={styles.buttons}>
+              <button
+                className={styles.Button}
+                onClick={() => navigate("/rooms/post")}
+              >
+                <p>Post Property</p>
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.allRooms}>
+            {loading ? (
+              <Loading />
+            ) : (
+              <div className={styles.othersList}>
+                {filteredRooms.length > 0 ? (
+                  <ul className={styles.roomList}>
+                    {filteredRooms.map((room) => (
+                      <li key={room._id}>
+                        <RoomItem
+                          image={room.photos?.[0]}
+                          name={room.title}
+                          price={room.price}
+                          description={room.description}
+                          owner={room.owner}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <NoResultsFound />
+                )}
+              </div>
+            )}
+
+            <MapContainer center={mapPosition} zoom={12} className={styles.map}>
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              {filteredRooms.map((room) => (
+                <Marker
+                  key={room._id}
+                  position={[room.latitude, room.longitude]}
+                >
+                  <Popup>
+                    <div>
+                      <h3>{room.title}</h3>
+                      <p>${room.price} per month</p>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedRoom(room);
+                        }}
+                        className={styles.viewDetails}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+
+              <DetectMapClick onClick={() => setSelectedRoom(null)} />
+              <ResetLocationButton position={mapPosition} />
+            </MapContainer>
           </div>
         </div>
-        <ul className={styles.roomList}>
-          {rooms.map((room) => (
-            <li key={room._id}>
-              <RoomItem
-                image={room.photos[0] || "default.jpg"}
-                name={room.title}
-                price={room.price}
-                capacity={room.capacity || "N/A"}
-                description={room.description}
-                phone={room.phone || "N/A"}
-                email={room.email || "N/A"}
-              />
-            </li>
-          ))}
-        </ul>
 
-        {/* Load More Button */}
-        {hasMore && !loading && (
-          <button
-            className={styles.loadMore}
-            onClick={() => setPage((prevPage) => prevPage + 1)}
-          >
-            Load More
-          </button>
+        <div id="my-properties" className={styles.myProperties}>
+          <h1>My Properties</h1>
+          {userRooms.length === 0 ? (
+            <NoResultsFound />
+          ) : (
+            <ul className={styles.myList}>
+              {userRooms.map((room) => (
+                <li key={room._id}>
+                  <RoomItem
+                    image={room.photos?.[0]}
+                    name={room.title}
+                    price={room.price}
+                    description={room.description}
+                    isMyProperty={true}
+                    onDelete={() => handleRemoveProperty(room._id)}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {showNotif && <Notifications />}
+        {selectedRoom && (
+          <RoomDetailsModal
+            room={selectedRoom}
+            onClose={() => setSelectedRoom(null)}
+          />
         )}
-
-        {/* Loading Indicator */}
-        {loading && <p>Loading...</p>}
       </div>
-
-      {showNotif && <Notifications />}
     </>
+  );
+}
+
+function DetectMapClick({ onClick }) {
+  useMapEvents({ click: onClick });
+  return null;
+}
+
+function ResetLocationButton({ position }) {
+  const map = useMap();
+  return (
+    <button
+      onClick={() => map.setView(position, 13)}
+      className={styles.resetButton}
+    >
+      See Around Me
+    </button>
   );
 }

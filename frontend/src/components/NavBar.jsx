@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import SignInModal from "./SignInModal";
 import styles from "./NavBar.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faBed, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faBell, faBed } from "@fortawesome/free-solid-svg-icons";
 import { Navigate, NavLink } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Loading from "./Loading";
@@ -18,32 +18,20 @@ export default function NavBar({
   return (
     <>
       <nav className={styles.nav}>
-        <h1 className={styles.heading}>StayMate</h1>
+        <NavLink to="/" style={{ color: "white", textDecoration: "none" }}>
+          <h1 className={styles.heading}> StayMate</h1>
+        </NavLink>
         <div className={styles.options}>
           {loggedIn ? (
             <>
               <span
                 onClick={() => setShowNotif(false)}
                 style={{ color: "white" }}
-              >
-                <NavLink to="/" style={{ color: "white" }}>
-                  <FontAwesomeIcon icon={faSearch} />
-                </NavLink>
-              </span>
+              ></span>
               <span onClick={() => setShowNotif((b) => !b)}>
                 <FontAwesomeIcon icon={faBell} />
               </span>
-              {/* <span
-                onClick={() => setShowNotif(false)}
-                style={{ color: "white" }}
-              >
-                <NavLink to="/chat" style={{ color: "white" }}>
-                  <FontAwesomeIcon
-                    icon={faComments}
-                    onClick={() => setShowChat(true)}
-                  />
-                </NavLink>
-              </span> */}
+              
               <span onClick={() => setShowNotif(false)}>
                 <NavLink to="/room">
                   <FontAwesomeIcon icon={faBed} style={{ color: "white" }} />
@@ -57,14 +45,18 @@ export default function NavBar({
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                  onClick={()=>setShowNotif(false)}
+                  onClick={() => setShowNotif(false)}
                 >
-                  <img className={styles.userImage} src={user.photo} alt="" />
+                  <img className={styles.userImage}
+                    src={
+                      user?.photo || "https://avatar.iran.liara.run/public/41"
+                    }
+                    alt="Profile"
+                  />
                 </span>
               </NavLink>
             </>
           ) : (
-            // Show Sign In option only when user is not logged in
             <span
               className={styles.login}
               style={{ fontSize: "1rem", cursor: "pointer" }}

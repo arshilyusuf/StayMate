@@ -8,7 +8,7 @@ export default function SignInModal({ closeModal }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const { loginUser , loading} = useContext(AuthContext); // Assuming this updates user context
+  const { loginUser , loading} = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,9 +18,9 @@ export default function SignInModal({ closeModal }) {
     e.preventDefault();
 
     try {
-      await loginUser(formData.email, formData.password); // Calls the login function
-      closeModal(); // Close modal
-      navigate("/"); // Redirect to homepage
+      await loginUser(formData.email, formData.password); 
+      closeModal(); 
+      navigate("/"); 
     } catch (error) {
       console.error("Login error:", error.message);
       setError(error.message);

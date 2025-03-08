@@ -10,9 +10,7 @@
   cursor: pointer;
   background-color: #383838;
   color: rgb(240, 240, 240);
-  
   transition: background 0.3s ease-in-out;
-
 }
 
 .button:hover {

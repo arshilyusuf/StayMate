@@ -119,7 +119,6 @@
   box-shadow: 0 0 5px rgba(161, 212, 150, 0.5);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .userContainer {
     flex-direction: column;
@@ -155,7 +154,7 @@
   width: fit-content;
 }
 .coordinates input {
-  width: fit-content; /* Ensure input fields take up available space */
+  width: fit-content; 
 }
 .fileInput {
   padding: 0.8rem 1.5rem;

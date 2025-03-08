@@ -7,12 +7,13 @@ export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
       const [loading, setLoading] = useState(false);
       
+
   const checkAuthStatus = async () => {
     try {
       setLoading(true);
       const response = await fetch("http://localhost:8000/users/me", {
         method: "GET",
-        credentials: "include", // ✅ Sends cookies with the request
+        credentials: "include", 
       });
 
       if (response.ok) {
@@ -36,8 +37,18 @@ export const AuthProvider = ({ children }) => {
 
 
   useEffect(() => {
-    checkAuthStatus();
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (storedToken && storedUser) {
+      setUser(JSON.parse(storedUser));
+      setLoggedIn(true); 
+    } else {
+      checkAuthStatus(); 
+    }
   }, []);
+
+
 
   const loginUser = async (email, password) => {
     try {
@@ -46,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include", // ✅ Ensures cookies are sent/received
+        credentials: "include", 
       });
 
       const data = await response.json();
@@ -59,7 +70,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
       setLoggedIn(true);
 
-      return data; // Return user data after login
+      return data; 
     } catch (error) {
       console.error("❌ Login failed:", error.message);
       throw error;
@@ -69,27 +80,30 @@ export const AuthProvider = ({ children }) => {
   };
 
 
-  const logoutUser = async () => {
-    const confirmLogout = window.confirm("Are you sure you want to log out?");
+const logoutUser = async () => {
+  const confirmLogout = window.confirm("Are you sure you want to log out?");
 
-    if (!confirmLogout) return; 
-    try {
-      setLoading(true);
-      await fetch("http://localhost:8000/users/logout", {
-        method: "POST",
-        credentials: "include", // Sends cookies with request
-      });
+  if (!confirmLogout) return;
 
-      console.log("🔹 Logged out successfully");
-      setUser(null);
-      setLoggedIn(false);
-    } catch (error) {
-      console.error("⚠️ Logout error:", error);
-    }
-    finally{
-      setLoading(false);
-      }
-  };
+  try {
+    setLoading(true);
+    await fetch("http://localhost:8000/users/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    console.log("🔹 Logged out successfully");
+    setUser(null); 
+    setLoggedIn(false); 
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  } catch (error) {
+    console.error("⚠️ Logout error:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <AuthContext.Provider value={{ user, setUser, loggedIn,setLoggedIn, loginUser, logoutUser, loading }}>

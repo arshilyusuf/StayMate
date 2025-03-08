@@ -13,7 +13,7 @@
       overflow-y: auto;
       box-shadow: 4px 4px 4px 0px rgba(128, 128, 128, 0.17);
       scrollbar-color: none;
-      z-index: 100;
+      z-index: 2000;
       
 }
 .notifications ul{

@@ -16,7 +16,6 @@ export default function Neighbor({ user }) {
         />
         <h4>{user.name}</h4>
         <h5>{user.occupation}</h5>{" "}
-        {/* Fixed typo (occoupation -> occupation) */}
         <h6>
           {user.gender.charAt(0).toUpperCase() + user.gender.slice(1)},{" "}
           {user.age}

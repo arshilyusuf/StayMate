@@ -40,7 +40,7 @@
 }
 
 .fileInput {
-  display: none; /* Hide default file input */
+  display: none; 
 }
 
 .uploadButton {

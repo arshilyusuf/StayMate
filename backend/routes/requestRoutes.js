@@ -1,13 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Request = require("../models/requestModel");
-const { protect } = require("../middlewares/authMiddleware"); // Use destructuring
+const { protect } = require("../middlewares/authMiddleware"); 
 
-// Send a request
 router.post("/send", protect, async (req, res) => {
   try {
     const { receiverId } = req.body;
-    const senderId = req.user.id; // Extracted from authMiddleware
+    const senderId = req.user.id; 
 
     if (senderId === receiverId) {
       return res
@@ -38,7 +37,6 @@ router.post("/send", protect, async (req, res) => {
   }
 });
 
-// Get notifications (pending requests)
 router.get("/notifications", protect, async (req, res) => {
   try {
     console.log("\n🔹 Incoming request to /requests/notifications");
@@ -66,7 +64,6 @@ router.get("/notifications", protect, async (req, res) => {
   }
 });
 
-// Update request status (accept/reject)
 router.post("/update", protect, async (req, res) => {
   try {
     const { requestId, status } = req.body;

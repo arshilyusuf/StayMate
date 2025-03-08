@@ -6,7 +6,7 @@ import Features from "../components/Features";
 import Reviews from "../components/Reviews";
 import Contact from "../components/Contact";
 import Notifications from "../components/Notifications";
-import Profile from "./Profile"; // Import Profile component
+import Profile from "./Profile"; 
 
 export default function HomePage({
   showNotif,
