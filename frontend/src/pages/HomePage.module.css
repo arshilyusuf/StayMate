@@ -1,0 +1,25 @@
+
+.heading{
+      font-size: 4rem;
+      align-items: center;
+      justify-content: center;
+      padding: 4rem;
+      padding-bottom: 1rem;
+      padding-left: 3rem;
+      width: 60%;
+      margin: 0rem 2rem;
+background: linear-gradient(45deg, rgba(22, 96, 96, 0.7), rgb(39, 148, 151), rgba(0, 50, 50, 0.894));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.desc{
+      margin: 0rem 5rem;
+      font-size: 1rem;
+      font-weight: 400;
+      width: 50%;
+      padding-left: 1rem;
+      border-left: 3px solid black;
+}
+.searchButton{
+      background-color: brown;
+}

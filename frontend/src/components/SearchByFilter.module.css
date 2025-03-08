@@ -1,0 +1,87 @@
+.searchByFilter {
+  background: rgb(242, 242, 242);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  padding-left: 4rem;
+  padding-right: 4rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 1.5rem;
+
+}
+.options{
+  display: flex;
+  gap: 1rem;
+  background-color: rgb(232, 232, 232);
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: rgb(36, 36, 36);
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(95, 158, 160, 0.2); /* Light cadet blue */
+  width: auto;
+}
+
+.filterGroup label {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.filterGroup input,
+.filterGroup select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  background: white;
+}
+
+.filterGroup input[type="range"] {
+  cursor: pointer;
+}
+
+/* Styling for Apply Filters Button */
+.searchByFilter button {
+  background: cadetblue;
+  color: white;
+  font-size: 1rem;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.searchByFilter button:hover {
+  background: rgb(72, 128, 130);
+}
+.searchByFilter h4{
+  font-size: 2rem;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+  .searchByFilter {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .filterGroup {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+.buttons{
+  display: flex;
+  gap:1em
+}
+

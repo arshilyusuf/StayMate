@@ -1,0 +1,85 @@
+/* Full-screen overlay for the map */
+
+.overlay {
+  position: fixed;
+ top:0;
+ left: 0;
+  width: 100%;  /* Fix: Use 100% instead of 100vw */
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-sizing: border-box;
+  border-radius: 1rem;
+}
+
+/* Map container */
+.mapContainer {
+  width: 90%;
+  height: 90%;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+
+/* Container for the map */
+.mapContainer {
+  width: 80%;
+  height: 80%;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Controls container */
+.controls {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background: white;
+  border-top: 1px solid #ddd;
+}
+
+/* Button styles (same as your reference button) */
+.confirmButton,
+.cancelButton {
+  height: fit-content;
+  width: 10rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5rem;
+  cursor: pointer;
+  font-weight: 400;
+  transition: background 0.3s ease-in-out;
+  text-align: center;
+}
+
+/* Confirm button */
+.confirmButton {
+  background-color: #383838;
+  color: rgb(240, 240, 240);
+}
+
+.confirmButton:hover {
+  background-color: #0056b3;
+}
+
+/* Cancel button */
+.cancelButton {
+  background-color: rgb(197, 68, 68);
+  color: white;
+}
+
+.cancelButton:hover {
+  background-color: rgb(160, 50, 50);
+}

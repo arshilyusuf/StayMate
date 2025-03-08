@@ -1,0 +1,28 @@
+.container{
+      padding: 1.5rem 1.5rem;
+      background-color: rgb(169, 201, 201);
+      border-radius: 1rem;
+     width: 100%;
+     
+}
+.nearList{
+     
+      border-radius: 1rem;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      list-style-type: none;
+}
+.nearList li{
+      padding: 0.5rem;
+      margin: 0.2rem;
+      background-color: rgb(235, 230, 230);
+      border-radius:0.5rem;
+      }
+.filterOptions{
+      padding: 0.2rem 1rem;
+      color: rgb(45, 45, 45);
+      background-color: greenyellow;
+      border-radius: 0.4rem;
+      border-style: none;
+      
+}

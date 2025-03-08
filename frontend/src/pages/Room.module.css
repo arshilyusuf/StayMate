@@ -1,0 +1,78 @@
+.container{
+      display: flex;
+      flex-direction: column;
+      background-color: rgba(228, 228, 228, 0.706);
+      padding: 1rem;
+      margin: 1rem;
+      border-radius: 1rem;
+      
+}
+.container h1{
+      text-align: center;
+}
+
+.roomList{
+      list-style-type: none;
+      background-color: rgb(225, 225, 225);
+      padding: 1rem;
+      border-radius: 1rem;
+      margin-top: 1rem;
+}
+
+.roomItem{
+      background-color: rgb(237, 237, 237);
+      padding: 1rem;
+      margin-top: 1rem;
+      display: flex;
+      gap:2rem;
+      border-radius: 1rem;
+}
+.roomItem img{
+      width: 20rem;
+      height: 15rem;
+}
+.details{
+      display: flex;
+      justify-content: space-between;
+      width:100%;
+}
+.leftSection h3{
+      font-size: 2rem;
+      font-weight: 500;
+}
+.leftSection h4{
+      font-size: 1.5rem;
+      font-weight: 500;
+}
+.leftSection h6{
+      font-size: 1rem;
+      font-weight: 300;
+}
+.contactButton{
+      border: none;
+      background-color: rgb(61, 167, 61);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      color: white;
+}
+
+.headerSection{
+      display: flex;
+      justify-content: space-between;
+}
+.Button{
+      border: none;
+      background-color:cadetblue;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease;
+}
+.Button:hover{
+      background-color: rgb(51, 89, 91);
+}
+.buttons{
+      display: flex;
+      gap: 1rem;
+}
