@@ -14,7 +14,7 @@ Node.js + Express.js
 MongoDB + Mongoose for database
 JWT Authentication (HTTP-only cookies)
 
-Features ✨
+Features 
 ✔️ User Authentication – Sign up, log in, and manage your account securely
 ✔️ Post Rooms – List available rooms with photos, descriptions, and amenities
 ✔️ Find Rooms – Search for nearby rooms using filters and an interactive map
