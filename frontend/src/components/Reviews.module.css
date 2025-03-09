@@ -51,3 +51,66 @@
 .details{
       padding-right: 2rem;
 }
+@media (max-width: 768px) {
+  .review {
+    flex-direction: column; /* Stack image and text */
+    gap: 1.5rem; /* Reduce gap for better spacing */
+    text-align: center;
+    width: 90vw; /* Ensure it fits within the screen */
+    padding: 1.5rem;
+    border-left: none; /* Remove left border */
+    border-top: 1rem solid rgb(44, 74, 75); /* Use top border instead */
+    border-radius: 2rem;
+  }
+
+  .image img {
+    width: 8rem; /* Reduce image size */
+    border-width: 4px;
+  }
+
+  .reviewContainer {
+    padding: 1.5rem;
+  }
+
+  .reviewContainer h3 {
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  .details {
+    padding: 0;
+  }
+
+  .head {
+    font-size: 1.6rem; /* Slightly smaller title */
+    line-height: 2rem;
+  }
+
+  .content {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .review {
+    width: 95vw;
+    padding: 1rem;
+  }
+
+  .image img {
+    width: 6rem;
+  }
+
+  .reviewContainer h3 {
+    font-size: 1.5rem;
+  }
+
+  .head {
+    font-size: 1.4rem;
+  }
+
+  .content {
+    font-size: 0.85rem;
+  }
+}

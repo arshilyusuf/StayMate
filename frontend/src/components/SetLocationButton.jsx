@@ -6,6 +6,7 @@ import {
   faLocationDot,
   faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
+
 const SetLocationButton = ({
   setUserData,
   isEditing,
@@ -55,6 +56,7 @@ const SetLocationButton = ({
           className={styles.button}
           onClick={handleUseMyLocation}
           disabled={!isEditing}
+          type="button"
         >
           <FontAwesomeIcon icon={faLocationDot} />
         </button>
@@ -62,6 +64,7 @@ const SetLocationButton = ({
           className={styles.button}
           onClick={handleSelectLocation}
           disabled={!isEditing}
+          type="button"
         >
           <FontAwesomeIcon icon={faMapLocationDot} />
         </button>

@@ -9,9 +9,10 @@
   width: 100%;
   box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.1);
   height: auto;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(2px);
   gap: 2rem;
-  margin: 1rem;
+  
+  
 }
 
 .rightSection {
@@ -154,8 +155,8 @@ font-weight: 600;
 .roommate {
   display: flex;
   justify-content: center;
-  align-items: center; /* Align text and checkbox in the same row */
-  gap: 0.5rem; /* Add spacing between text and checkbox */
+  align-items: center; 
+  gap: 0.5rem; 
   background-color: #1a6d0973;
   padding: 1rem 2rem;
   border-radius: 0.5rem;
@@ -175,8 +176,8 @@ font-weight: 600;
 .cancel{
   display: flex;
   justify-content: center;
-  align-items: center; /* Align text and checkbox in the same row */
-  gap: 0.5rem; /* Add spacing between text and checkbox */
+  align-items: center; 
+  gap: 0.5rem; 
   background-color: #dd2727e6;
   padding: 0.5rem 1.5rem;
   border-radius: 0.5rem;
@@ -186,4 +187,51 @@ font-weight: 600;
   top: 1rem;
   left: 1rem;
   
+}
+
+@media (max-width: 768px) {
+  .userContainer {
+    flex-direction: column;
+    padding: 2rem;
+    gap: 1rem;
+  }
+
+  .rightSection {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .image {
+    width: 10rem;
+    height: 10rem;
+  }
+
+  .inputGroup {
+    width: 100%;
+  }
+
+  .inputField,
+  .nameInput {
+    width: 100%;
+  }
+
+  .uploadButton {
+    width: 100%;
+    text-align: center;
+  }
+
+  .submit,
+  .cancel {
+    width: 100%;
+  }
+
+  .roommate {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cancel {
+    position: static;
+    width: 100%;
+  }
 }

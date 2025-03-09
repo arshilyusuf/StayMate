@@ -33,3 +33,12 @@ input{
       border: 2px solid rgb(68, 68, 68);
      
 }
+
+.forgotPassword{
+      color: rgb(116, 120, 0);
+      cursor: pointer;
+      margin-top: 0.5rem;
+}
+.forgotPassword:hover{
+      color: rgb(49, 51, 0);
+}

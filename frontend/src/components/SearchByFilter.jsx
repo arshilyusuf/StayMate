@@ -26,20 +26,41 @@ export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
    );
 
    useEffect(() => {
+     const storedUsers = JSON.parse(localStorage.getItem("filteredUsers"));
+     if (storedUsers) {
+       setFilteredUsers(storedUsers);
+       setShowFilteredUsers(true);
+     }
+   }, []);
+
+   useEffect(() => {
      localStorage.setItem("filters", JSON.stringify(filters));
      localStorage.setItem(
        "showFilteredUsers",
        JSON.stringify(showFilteredUsers)
      );
    }, [filters, showFilteredUsers]);
+   
+   useEffect(() => {
+     const storedTimestamp = localStorage.getItem("filterTimestamp");
 
+     if (storedTimestamp) {
+       const currentTime = Date.now();
+       if (currentTime - storedTimestamp > 5 * 60 * 1000) {
+         // 5 minutes
+         clearFilters();
+       }
+     }
+   }, []);
    useEffect(() => {
      if (filteredUsers.length > 0) {
        localStorage.setItem("filteredUsers", JSON.stringify(filteredUsers));
+       localStorage.setItem("filterTimestamp", Date.now()); // Save timestamp
      }
    }, [filteredUsers]);
 
 
+   
  const handleChange = (e) => {
    const { name, value } = e.target;
 
@@ -140,10 +161,7 @@ export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
         </div>
 
         <div className={styles.filterGroup}>
-          <label>
-            Distance Radius: {filters.distanceRange}{" "}
-            km
-          </label>
+          <label>Distance Radius: {filters.distanceRange} km</label>
           <input
             type="range"
             name="distanceRange"
@@ -188,21 +206,19 @@ export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
             <option value="nonveg">Non-Vegetarian</option>
           </select>
         </div>
-      </div>
-
-      <div className={styles.buttons}>
-        <button onClick={applyFilters}>Apply Filters</button>
-        <button
-          onClick={clearFilters}
-          className={styles.clearButton}
-          style={{ backgroundColor: "rgb(255, 77, 77, 0.9)" }}
-        >
-          Clear Filters
-        </button>
+        <div className={styles.buttons}>
+          <button onClick={applyFilters}>Apply Filters</button>
+          <button
+            onClick={clearFilters}
+            className={styles.clearButton}
+            style={{ backgroundColor: "rgb(255, 77, 77, 0.9)" }}
+          >
+            Clear Filters
+          </button>
+        </div>
       </div>
 
       {showFilteredUsers && <FilterList users={filteredUsers} />}
-      
     </div>
   );
 }

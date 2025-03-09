@@ -9,6 +9,9 @@ router.post("/login", authController.login)
 router.post("/logout", authController.logout);
 router.post("/update",protect,authController.uploadPhoto, authController.update)
 
+router.post("/forgotPassword", authController.forgotPassword);
+router.patch("/resetPassword/:token", authController.resetPassword);
+
 router.get("/me", protect, async (req, res) => {
   res.status(200).json({ user: req.user });
 });

@@ -97,6 +97,10 @@ const logoutUser = async () => {
     setLoggedIn(false); 
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("filters");
+    localStorage.removeItem("filteredUsers");
+    localStorage.removeItem("showFilteredUsers");
+    localStorage.removeItem("filterTimestamp");
   } catch (error) {
     console.error("⚠️ Logout error:", error);
   } finally {

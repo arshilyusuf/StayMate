@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 1.5rem;
   background-color: #ededed54;
   padding: 2rem;
@@ -183,4 +184,117 @@ textarea {
 .post:hover{
   background-color: cadetblue;
   color:white
+}
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+    width: 100%;
+  }
+
+  .form {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  input,
+  textarea {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .position {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .buttons {
+    width: 100%;
+    justify-content: space-evenly;
+    padding: 0rem 0.1rem;
+  }
+  
+  .button {
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .photoPreviewContainer img {
+    width: 10rem;
+    height: 7rem;
+  }
+
+  .uploadButton {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .post {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 1rem;
+    width: 100%;
+  }
+ 
+  .form {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  input,
+  textarea {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .position {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .position input{
+    width: 7rem;
+  }
+
+  .buttons {
+    flex-direction: row;
+    width: 100%;
+    gap: 0.2rem;
+     padding: 0rem 0.1rem;
+  }
+
+  .button {
+    height: 2rem;
+    width: 2rem;
+    font-size: 0.9rem;
+  }
+
+  .photoPreviewContainer img {
+    width: 8rem;
+    height: 6rem;
+  }
+
+  .uploadButton {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .post {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+  }
+
+  .removePhotoButton {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 0.8rem;
+  }
 }

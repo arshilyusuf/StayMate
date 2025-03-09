@@ -14,7 +14,7 @@ export default function Neighbor({ user }) {
           src={user.photo || "https://avatar.iran.liara.run/public/10"}
           alt="Profile"
         />
-        <h4>{user.name}</h4>
+        <p>{user.name}</p>
         <h5>{user.occupation}</h5>{" "}
         <h6>
           {user.gender.charAt(0).toUpperCase() + user.gender.slice(1)},{" "}

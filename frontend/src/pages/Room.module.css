@@ -1,166 +1,184 @@
-.container{
-      display: flex;
-      flex-direction: column;
-      background-color: rgba(228, 228, 228, 0.706);
-      padding: 1rem;
-      
-      border-radius: 1rem;
-      
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(228, 228, 228, 0.706);
+  padding: 1rem;
+  border-radius: 1rem;
 }
-.roomContainer{
-      display: flex;
-      flex-direction: column;
-      padding: 2rem;
-      gap: 1rem;
+
+.roomContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 1rem;
 }
-.container h1{
-      text-align: center;
+
+.container h1 {
+  text-align: center;
 }
-.allRooms{
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      justify-content: space-between;
+
+.allRooms {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
 }
-.roomList{
-      list-style-type: none;
-      width: 100%;
-      border-radius: 1rem;
-      
+
+.roomList {
+  list-style-type: none;
+  width: 100%;
+  border-radius: 1rem;
 }
+
 .myList {
   border-radius: 1rem;
   display: grid;
-  grid-template-columns: repeat(2, 1fr); 
-  grid-gap: 1.25rem; 
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1.25rem;
   list-style: none;
   padding: 2rem;
 }
 
-.myList li {
-  background: white;
-  padding: 0.9375rem; 
-  border-radius: 0.5rem; 
-  box-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.1); 
+.roomItem {
+  background-color: rgb(237, 237, 237);
+  padding: 1rem;
+  margin-top: 1rem;
+  display: flex;
+  gap: 1.5rem;
+  border-radius: 1rem;
+  height: 10rem;
 }
 
-
-.roomItem{
-      background-color: rgb(237, 237, 237);
-      padding: 1rem;
-      margin-top: 1rem;
-      display: flex;
-      gap:1rem;
-      border-radius: 1rem;
-      width: 100;
-}
-.rightSection{
-      display: flex;
-      flex-direction: column;
-      gap:1rem;
+.rightSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.roomItem img{
-      width: 10rem;
-      height: 10rem;
-      object-fit: cover;
-}
-.details{
-      display: flex;
-      justify-content: space-between;
-      width:100%;
-}
-.leftSection h3{
-      font-size: 2rem;
-      font-weight: 500;
-}
-.leftSection h4{
-      font-size: 1.5rem;
-      font-weight: 500;
-}
-.leftSection h6{
-      font-size: 1rem;
-      font-weight: 300;
-}
-.contactButton{
-      border: none;
-      background-color: rgb(61, 167, 61);
-      padding: 0.25rem 0.75rem;
-      border-radius: 0.5rem;
-      color: white;
-      margin-top: 0.5rem;
+.roomItem img {
+  width: 10rem;
+  height: 10rem;
+  object-fit: cover;
+  border-radius: 1rem;
 }
 
-.headerSection{
-      display: flex;
-      justify-content: space-between;
+.details {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
-.myProperties{
-      background-color: rgba(95, 158, 160, 0.292);
-      padding: 1rem 2rem;
-      border-radius: 1rem;
-      
-}
-.headerSection h1, .myProperties h1{
-      border-bottom: 5px solid cadetblue;
-      
 
+.leftSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
-.othersList{
-      background-color: rgba(187, 205, 206, 0.412);
-      padding: 1rem 1rem;
-      border-radius: 1rem;
-      height: 80vh;
-      margin-top: 1rem;
-      margin-bottom: 0.5rem;
-      width: 50%;
+
+.leftSection h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
 }
-.myProperties h1{
-      width: fit-content;
+
+.leftSection h4 {
+  font-size: 1.3rem;
+  font-weight: 500;
 }
-.others{
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
+
+.leftSection p {
+  font-size: 1rem;
 }
-.loadMore{
-      background-color: rgb(167, 167, 167);
-      padding: 0.25rem 0.75rem;
-      border-radius: 0.5rem;
-      color: white;
-      border: none;
+
+.contactButton {
+  border: none;
+  background-color: rgb(61, 167, 61);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  color: white;
+  margin-top: 0.5rem;
 }
-.Button{
-      border: none;
-      background-color:cadetblue;
-      color: white;
-      padding: 0.5rem 1.5rem;
-      font-size: 1rem;
-      border-radius: 0.5rem;
-      transition: all 0.3s ease;
+
+.headerSection {
+  display: flex;
+  justify-content: space-between;
 }
-.Button:hover{
-      background-color: rgb(51, 89, 91);
+
+.myProperties {
+  background-color: rgba(95, 158, 160, 0.292);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
 }
-.buttons{
-      display: flex;
-      gap: 1rem;
+
+.headerSection h1,
+.myProperties h1 {
+  border-bottom: 5px solid cadetblue;
 }
-.viewDetails{
-      background-color: rgb(167, 167, 167);
-      padding: 0.25rem 0.75rem;
-      border-radius: 0.5rem;
-      color: white;
-      border: none;
+
+.othersList {
+  background-color: rgba(187, 205, 206, 0.412);
+  padding: 1rem 1rem;
+  border-radius: 1rem;
+  height: 80vh;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  width: 50%;
 }
-.removeButton{
-      background-color: rgb(228, 60, 60);
-      padding: 0.25rem 0.75rem;
-      border-radius: 0.5rem;
-      color: white;
-      border: none;
-      margin-top: 0.5rem;
+
+.myProperties h1 {
+  margin-top: 1rem;
+  width: fit-content;
+}
+
+.others {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loadMore {
+  background-color: rgb(167, 167, 167);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  color: white;
+  border: none;
+}
+
+.Button {
+  border: none;
+  background-color: cadetblue;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.Button:hover {
+  background-color: rgb(51, 89, 91);
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.viewDetails {
+  background-color: rgb(167, 167, 167);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  color: white;
+  border: none;
+}
+
+.removeButton {
+  background-color: rgb(228, 60, 60);
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  color: white;
+  border: none;
+  margin-top: 0.5rem;
 }
 
 .map {
@@ -231,7 +249,6 @@
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.08);
 }
 
-
 .filterContainer {
   display: flex;
   gap: 1rem;
@@ -250,3 +267,97 @@
   border-color: rgb(51, 89, 91);
 }
 
+@media (max-width: 1024px) {
+  .myList {
+    grid-template-columns: 1fr;
+  }
+
+  .roomItem {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .roomItem img {
+    width: 100%;
+    height: auto;
+  }
+  
+}
+
+@media (max-width: 768px) {
+  .allRooms {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .Button{
+      margin-top: 1rem;
+  }
+  .myProperties{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+  }
+  .othersList {
+    width: 100%;
+    height: auto;
+    max-height: none;
+  }
+
+  .map {
+    width: 100%;
+    height: 30rem;
+  }
+
+  .headerSection {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .contactButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .roomItem {
+    padding: 0.5rem;
+  }
+
+  .roomItem img {
+    width: 100%;
+    height: auto;
+  }
+
+  .leftSection h3 {
+    font-size: 1.2rem;
+  }
+
+  .leftSection h4 {
+    font-size: 1rem;
+  }
+
+  .map {
+    height: 20rem;
+  }
+
+  .filterContainer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filterContainer input {
+    width: 100%;
+  }
+
+  .modalContent {
+    width: 90%;
+    padding: 15px;
+  }
+}

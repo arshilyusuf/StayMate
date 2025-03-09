@@ -17,15 +17,7 @@ export default function FilterList({ users }) {
         }}>Filtered Search : </h3>
       </div>
       {users.length!==0?(<ul
-        className={styles.nearList}
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)", 
-          gap: "0.5rem",
-          padding: "0.5rem",
-          marginTop: "0.5rem",
-          listStyleType: "none",
-        }}
+        className={styles.nearList} 
       >
         {users.map((user, index) => (
           <Neighbor key={index} user={user} />

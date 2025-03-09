@@ -50,13 +50,16 @@ export default function Map({ filteredUsers }) {
 
   const neighborList = users.filter(
     (neighbor) =>
-      isInRange(neighbor.latitude, neighbor.longitude, 10) &&
+      isInRange(neighbor.latitude, neighbor.longitude, 20) &&
       neighbor._id !== user._id
   );
 
   function handlePopUpClick(id) {
     setSelectedUser(users.find((u) => u._id === id));
   }
+console.log("Total Users:", users.length);
+console.log("Filtered Users (within 1000km):", neighborList.length);
+console.log("Neighbor List Data:", neighborList);
 
   return (
     <div className={styles.mapContainer}>
@@ -76,7 +79,12 @@ export default function Map({ filteredUsers }) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           {filteredUsers.length === 0
-            ? neighborList.map((neighbor) => (
+            ? neighborList.map((neighbor) => {
+              console.log(
+                `Rendering marker for: ${neighbor.name}, Location: (${neighbor.latitude}, ${neighbor.longitude})`
+              );
+
+              return (
                 <Marker
                   key={neighbor._id}
                   position={[neighbor.latitude, neighbor.longitude]}
@@ -103,7 +111,9 @@ export default function Map({ filteredUsers }) {
                     {neighbor.occupation}
                   </Popup>
                 </Marker>
-              ))
+              );
+                
+})
             : filteredUsers.map((neighbor) => (
                 <Marker
                   key={neighbor._id}

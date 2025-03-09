@@ -23,3 +23,44 @@ background: linear-gradient(45deg, rgba(22, 96, 96, 0.7), rgb(39, 148, 151), rgb
 .searchButton{
       background-color: brown;
 }
+
+@media (max-width: 768px) {
+  .heading {
+    font-size: 2.5rem;
+    text-align: center;
+    padding: 2rem;
+    width: 90%;
+margin: 3rem 0;  }
+
+  .desc {
+    margin: 1rem auto;
+    font-size: 0.9rem;
+    width: 80%;
+    padding-left: 0.5rem;
+    border-left: 2px solid black;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .heading {
+    font-size: 2rem;
+    padding: 1.5rem;
+    width: 100%;
+    text-align: center;
+    margin: 3rem 0;
+  }
+
+  .desc {
+    font-size: 0.85rem;
+    width: 90%;
+    text-align: center;
+    border-left: none; /* Remove border on very small screens */
+  }
+
+  .searchButton {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+}

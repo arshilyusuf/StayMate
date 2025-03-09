@@ -27,7 +27,7 @@ export default function HomePage({
       />
 
       {!loggedIn ? (
-        <>
+        <div className={styles.container}>
           <h1 className={styles.heading}>
             Don't know where and with whom to stay? We've Got You.
           </h1>
@@ -40,7 +40,7 @@ export default function HomePage({
           <Reviews />
           <Contact />
           {showNotif && <Notifications />}
-        </>
+        </div>
       ) : (
         <>
           <Profile />

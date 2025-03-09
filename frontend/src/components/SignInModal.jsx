@@ -1,14 +1,16 @@
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import styles from "./SignInModal.module.css"
+import styles from "./SignInModal.module.css";
 import Loading from "./Loading";
+import SuccessMessage from "./SuccessMessage";
 
 export default function SignInModal({ closeModal }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const { loginUser , loading} = useContext(AuthContext);
+  const [success, setSuccess] = useState("");
+  const { loginUser, loading, loggedIn } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,11 +18,16 @@ export default function SignInModal({ closeModal }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     try {
-      await loginUser(formData.email, formData.password); 
-      closeModal(); 
-      navigate("/"); 
+      await loginUser(formData.email, formData.password);
+      setSuccess("Login Successful!");
+      setTimeout(() => {
+        closeModal();
+        navigate("/");
+      }, 2000);
     } catch (error) {
       console.error("Login error:", error.message);
       setError(error.message);
@@ -42,7 +49,17 @@ export default function SignInModal({ closeModal }) {
         zIndex: "101",
       }}
     >
-      {loading ? (
+      {loggedIn ? (
+        <>
+          {success && (
+          <SuccessMessage
+            message={success}
+            type="success"
+            onClose={() => setSuccess("")}
+          />
+          )}
+        </>
+      ) : loading ? (
         <Loading />
       ) : (
         <div
@@ -52,25 +69,30 @@ export default function SignInModal({ closeModal }) {
             borderRadius: "10px",
             width: "350px",
             boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "0.5rem",
           }}
         >
           <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Log In</h2>
 
           {error && (
-            <p
-              style={{
-                color: "red",
-                textAlign: "center",
-                marginBottom: "1rem",
-              }}
-            >
-              {error}
-            </p>
+            <SuccessMessage
+              message={error}
+              type="error"
+              onClose={() => setError("")}
+            />
           )}
 
           <form
             onSubmit={handleSubmit}
-            style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              width: "100%",
+            }}
           >
             <label>
               Email:
@@ -114,6 +136,13 @@ export default function SignInModal({ closeModal }) {
               Log In
             </button>
           </form>
+
+          <p
+            className={styles.forgotPassword}
+            onClick={() => navigate("/forgotPassword")}
+          >
+            Forgot Password?
+          </p>
 
           <p style={{ textAlign: "center", marginTop: "1rem" }}>
             Don't have an account?{" "}

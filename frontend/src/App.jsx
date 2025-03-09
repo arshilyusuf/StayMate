@@ -8,6 +8,7 @@ import SignUp from "./pages/SignUp";
 import { AuthContext } from "./context/AuthContext";
 import { useState, useContext, useEffect } from "react";
 import PostProperty from "./pages/PostProperty";
+import ForgotPassword from "./pages/forgotPassword";
 
 function App() {
   const [showNotif, setShowNotif] = useState(false);
@@ -74,6 +75,7 @@ useEffect(() => {
         <Route path="/signup" element={<SignUp setLoggedIn={setLoggedIn} />} />
         <Route path="/profile/:id" element={<NeighborProfile />} />
         <Route path="/rooms/post" element={<PostProperty/>} />
+        <Route path="/forgotPassword" element = {<ForgotPassword/>}/>
       </Routes>
     </Router>
   );

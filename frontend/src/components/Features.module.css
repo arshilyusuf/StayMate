@@ -19,3 +19,33 @@
 .featureList li p{
       font-size: 0.8rem;
 }
+@media (max-width: 768px) {
+  .featureList {
+    flex-direction: column; 
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .featureList li {
+    width: 90%; 
+    text-align: center;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .featureList {
+    margin: 1rem auto;
+    padding: 0.5rem;
+    max-width: 95%;
+  }
+
+  .featureList li {
+    width: 100%; 
+    padding: 0.8rem;
+  }
+
+  .featureList li p {
+    font-size: 0.85rem;
+  }
+}

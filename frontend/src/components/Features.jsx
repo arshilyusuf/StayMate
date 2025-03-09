@@ -18,9 +18,9 @@ export default function Features() {
         </p>
       </li>
       <li>
-        <h2>Chit Chat</h2>
+        <h2>Send Requests</h2>
         <p>
-          Chat one-on-one with potential roommates or landlords before making a
+          Send qequests to potential roommates or landlords before making a
           decision, ensuring a perfect match.
         </p>
       </li>

@@ -3,11 +3,10 @@
       margin: 0px;
       padding: 0px;
       font-family: 'Inter Tight', sans-serif;
+      box-sizing: border-box;
 }
 body {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.454), rgb(255, 255, 255)), 
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.228), rgb(255, 255, 255)), 
               url('./src/assets/pictures/mapview.jpg');     
 
-
-  
 }

@@ -13,7 +13,7 @@ export const RoomsProvider = ({ children }) => {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/rooms?page=${page}&limit=5`
+          `http://localhost:8000/rooms?page=${page}&limit=10`
         );
 
         const data = await response.json();

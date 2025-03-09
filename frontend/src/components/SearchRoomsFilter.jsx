@@ -52,19 +52,20 @@ export default function SearchRoomsFilter({ rooms, setFilteredRooms }) {
     const filteredList = filtered.filter((room)=>{
       return room.owner._id!==user._id
     })
+    console.log(filteredList)
     setFilteredRooms(filteredList);
   };
 
   return (
     <div className={styles.filterContainer}>
-      <h4>Filter Rooms</h4>
+      <h1 style={{ marginBottom: "1rem" }}>Filter Rooms</h1>
 
       <div className={styles.filterGroup}>
-        <label>Max Price: ${filters.priceRange}</label>
+        <label>Max Price: ₹{filters.priceRange}</label>
         <input
           type="range"
           min="100"
-          max="5000"
+          max="100000"
           step="50"
           value={filters.priceRange}
           onChange={(e) =>
@@ -78,7 +79,7 @@ export default function SearchRoomsFilter({ rooms, setFilteredRooms }) {
         <input
           type="range"
           min="1"
-          max="50"
+          max="100"
           step="1"
           value={filters.distanceRange}
           onChange={(e) =>

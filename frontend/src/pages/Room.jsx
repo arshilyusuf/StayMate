@@ -27,8 +27,14 @@ function RoomItem({
   owner,
   isMyProperty,
   onDelete,
+  removing
 }) {
-  const imageUrl = image ? `http://localhost:8000/${image}` : DEFAULT_AVATAR;
+  const imageUrl =
+    image && image.includes("picsum")
+      ? image
+      : image
+      ? `http://localhost:8000/${image}`
+      : DEFAULT_AVATAR;
 
   return (
     <div className={styles.roomItem}>
@@ -38,21 +44,21 @@ function RoomItem({
       <div className={styles.details}>
         <div className={styles.leftSection}>
           <h3>{name}</h3>
-          <h4>${price}</h4>
+          <h4>₹ {price}/mo</h4>
           <p>{description}</p>
         </div>
-          <div className={styles.rightSection}>
-            {isMyProperty ? (
-              <button className={styles.removeButton} onClick={onDelete}>
-                Remove
-              </button>
-            ) : (
-              <button className={styles.contactButton}>
-                <p>Phone: {owner?.phone || "N/A"}</p>
-                <p>Email: {owner?.email || "N/A"}</p>
-              </button>
-            )}
-          </div>
+        <div className={styles.rightSection}>
+          {isMyProperty ? (
+            <button className={styles.removeButton} onClick={onDelete} style={{cursor:'pointer'}}>
+              {removing?<Loading/>:'Remove'}
+            </button>
+          ) : (
+            <button className={styles.contactButton}>
+              <p>Phone: {owner?.phone || "N/A"}</p>
+              <p>Email: {owner?.email || "N/A"}</p>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -104,14 +110,14 @@ export default function Room({
   showChat,
   setShowChat,
 }) {
-  const { rooms, setRooms, loading } =
+  const { rooms, setRooms, setPage, hasMore, loading } =
     useContext(RoomsContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [mapPosition, setMapPosition] = useState(null);
   const [filteredRooms, setFilteredRooms] = useState(rooms);
-
+  const [removing, setRemoving] = useState(false)
 
   useEffect(() => {
     if (user?.latitude && user?.longitude) {
@@ -122,12 +128,14 @@ export default function Room({
   const userRooms = rooms.filter((room) => room.owner?._id === user?._id);
 
   const handleRemoveProperty = async (roomId) => {
+    
     const confirmDelete = window.confirm(
       "Are you sure you want to remove this property?"
     );
     if (!confirmDelete) return;
 
     try {
+      setRemoving(true)
       const response = await fetch(`http://localhost:8000/rooms/${roomId}`, {
         method: "DELETE",
         credentials: "include",
@@ -143,6 +151,8 @@ export default function Room({
       }
     } catch (error) {
       alert("Error removing property: " + error.message);
+    }finally{
+      setRemoving(false)
     }
   };
 
@@ -180,19 +190,34 @@ export default function Room({
             ) : (
               <div className={styles.othersList}>
                 {filteredRooms.length > 0 ? (
-                  <ul className={styles.roomList}>
-                    {filteredRooms.map((room) => (
-                      <li key={room._id}>
-                        <RoomItem
-                          image={room.photos?.[0]}
-                          name={room.title}
-                          price={room.price}
-                          description={room.description}
-                          owner={room.owner}
-                        />
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <ul className={styles.roomList}>
+                      {filteredRooms.map((room) => (
+                        <li key={room._id}>
+                          <RoomItem
+                            image={room.photos?.[0]}
+                            name={room.title}
+                            price={room.price}
+                            description={room.description}
+                            owner={room.owner}
+                            removing={removing}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+
+                    {hasMore && !loading && (
+                      <button
+                        className={styles.loadMoreBtn}
+                        onClick={() => setPage((prevPage) => prevPage + 1)}
+                      >
+                        Load More
+                      </button>
+                    )}
+
+                    
+                    {loading && <Loading/>}
+                  </>
                 ) : (
                   <NoResultsFound />
                 )}

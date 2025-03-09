@@ -37,7 +37,7 @@ export default function NearList() {
     (u) =>
       u.lookingForRoommate === true &&
       u._id !== user._id &&
-      getDistance(user.latitude, user.longitude, u.latitude, u.longitude) <= 10
+      getDistance(user.latitude, user.longitude, u.latitude, u.longitude) <= 20
   );
 
   return (
@@ -46,7 +46,7 @@ export default function NearList() {
         <Loading />
       ) : (
         <>
-          <h3>People around you looking for Roommates (within 10km)</h3>
+          <h3 style={{color:'black'}}>People around you looking for Roommates (within 20km)</h3>
           {neighborList.length ? (
             <ul className={styles.nearList}>
               {neighborList.map((neighbor) => (
