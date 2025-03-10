@@ -15,7 +15,15 @@ const xss = require("xss-clean");
 // Error Handling
 const globalErrorHandler = require("./controllers/errorController");
 /*        CORS CONFIGURATION      */
-app.use(cors({ origin: `https://stay-mate-frontend.vercel.app`, credentials: true }));
+const corsOptions = {
+  origin: 'https://stay-mate-frontend.vercel.app',  
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 app.use(compression())
 // Routers
