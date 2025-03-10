@@ -8,7 +8,7 @@ import SignUp from "./pages/SignUp";
 import { AuthContext } from "./context/AuthContext";
 import { useState, useContext, useEffect } from "react";
 import PostProperty from "./pages/PostProperty";
-import ForgotPassword from "./pages/forgotPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 import Background from "./components/Background";
 function App() {
   const [showNotif, setShowNotif] = useState(false);
