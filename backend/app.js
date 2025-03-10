@@ -12,6 +12,7 @@ const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 
+app.use(compression())
 // Error Handling
 const globalErrorHandler = require("./controllers/errorController");
 /*        CORS CONFIGURATION      */
@@ -25,7 +26,6 @@ const corsOptions = {
 // Apply CORS middleware
 app.use(cors(corsOptions));
 
-app.use(compression())
 // Routers
 const userRouter = require("./routes/userRoutes");
 const requestRouter = require("./routes/requestRoutes");
