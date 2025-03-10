@@ -59,7 +59,7 @@ exports.login = catchAsync(async (req, res, next) => {
   res
     .cookie("jwt", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
