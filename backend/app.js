@@ -12,6 +12,7 @@ const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 
+app.set('trust proxy', 1);  
 app.use(compression())
 // Error Handling
 const globalErrorHandler = require("./controllers/errorController");
