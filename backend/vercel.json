@@ -3,8 +3,7 @@
   "builds": [
     {
       "src": "app.js",
-      "use": "@vercel/node",
-      "config": { "includeFiles": ["dist/**"] }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -13,7 +12,10 @@
       "dest": "app.js",
       "methods": ["GET", "POST", "DELETE", "PATCH"],
       "headers": {
-        "Access-Control-Allow-Origin": "https://stay-mate-frontend.vercel.app"
+        "Access-Control-Allow-Origin": "https://stay-mate-frontend.vercel.app",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Methods": "GET, POST, DELETE, PATCH",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
       }
     }
   ]
