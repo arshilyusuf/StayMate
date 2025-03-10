@@ -11,9 +11,9 @@
     {
       "src": "/(.*)",
       "dest": "app.js",
-      "methods":["GET', "POST", "DELETE", "PATCH"],
+      "methods": ["GET", "POST", "DELETE", "PATCH"],
       "headers": {
-        "Access-Control-Allow-Origin": "*"    
+        "Access-Control-Allow-Origin": "*"
       }
     }
   ]
