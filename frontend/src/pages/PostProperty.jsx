@@ -11,13 +11,16 @@ import {
   faMapLocationDot,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import SuccessMessage from "../components/SuccessMessage"
+
 
 function PostProperty() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
-  const { setRooms, setLoading } = useContext(RoomsContext); // ✅ Get setRooms to update state
+  const { setRooms, setLoading, setUserRooms } = useContext(RoomsContext);
   const [showMap, setShowMap] = useState(false);
-
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -28,6 +31,31 @@ function PostProperty() {
     availability: true,
     photos: [],
   });
+  const fetchRooms = async () => {
+    try {
+      const latitude = user?.latitude || 21.2489992; // Default latitude
+      const longitude = user?.longitude || 81.6098999; // Default longitude
+
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_BACKEND_BASEURL
+        }/rooms?latitude=${latitude}&longitude=${longitude}&userId=${user._id}`,
+        {
+          credentials: "include",
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        setRooms(data.rooms);
+      } else {
+        console.error("Error fetching rooms:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+    }
+  };
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -37,17 +65,12 @@ function PostProperty() {
       newValue = 0;
     }
 
-    if (name === "amenities" && typeof value !== "string") {
-      newValue = String(value);
-    }
-
     setFormData({
       ...formData,
       [name]: newValue,
     });
   };
 
-  // Handle image file selection and preview
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -112,7 +135,8 @@ function PostProperty() {
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
+
       const formDataToSend = new FormData();
       formDataToSend.append("title", formData.title);
       formDataToSend.append("description", formData.description);
@@ -127,39 +151,60 @@ function PostProperty() {
         formDataToSend.append("photos", file);
       });
 
-      const response = await fetch("http://localhost:8000/rooms", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: formDataToSend,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/rooms`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: formDataToSend,
+        }
+      );
 
       const data = await response.json();
-      console.log("Backend Response:", data); 
+      
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to post property");
       }
 
-      alert("Property posted successfully!");
-
-      setRooms((prevRooms) => [
-        { ...data.room, owner: user }, 
+      
+      // ✅ Update state and trigger re-fetch
+      setRooms((prevRooms) => [{ ...data.room, owner: user }, ...prevRooms]);
+      setUserRooms((prevRooms) => [
+        { ...data.room, owner: user },
         ...prevRooms,
       ]);
+      
+      setSuccessMessage("Property Posted Successfully!");
+      await fetchRooms(); 
       navigate("/room");
     } catch (error) {
       console.error("Error posting property:", error.message);
-      alert(error.message);
-    }finally{
-      setLoading(false)
+      setErrorMessage(error.message || "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       <NavBar />
+      {errorMessage && (
+        <SuccessMessage
+          message={errorMessage}
+          type="error"
+          onClose={() => setErrorMessage("")}
+        />
+      )}
+      {successMessage && (
+        <SuccessMessage
+          message={successMessage}
+          type="success"
+          onClose={() => setSuccessMessage("")}
+        />
+      )}
       <div className={styles.container}>
         <h1>Post Property</h1>
         <form className={styles.form} onSubmit={handleSubmit}>

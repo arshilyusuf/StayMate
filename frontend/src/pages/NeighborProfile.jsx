@@ -24,29 +24,32 @@ export default function NeighborProfile() {
     }
 
     try {
-      const response = await fetch("http://localhost:8000/requests/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          senderId: loggedInUser._id,
-          receiverId: user._id,
-        }),
-        credentials:"include"
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/requests/send`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            senderId: loggedInUser._id,
+            receiverId: user._id,
+          }),
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.message || "Failed to send request");
       }
       
-      console.log("Sending request to:", user._id);
+     
       setRequestSent(true);
       setTimeout(() => setRequestSent(false), 3000);
     } catch (err) {
-      console.log(` front end error ${err}`)
+     
       setError(err.message);
     }
   }

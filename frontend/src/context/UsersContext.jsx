@@ -11,14 +11,16 @@ export function UsersProvider({ children }) {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch("http://localhost:8000/users", {
-        method: "GET",
-        credentials: "include", 
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/users`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       if (!response.ok) throw new Error("Failed to fetch users");
       const data = await response.json();
-      console.log(data.data.users)
-      console.log('Users Fetched')
+     
       setUsers(data.data.users);
     } catch (error) {
       console.error("Error fetching users:", error);

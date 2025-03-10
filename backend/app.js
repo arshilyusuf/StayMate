@@ -1,32 +1,73 @@
 const express = require("express");
 const app = express();
-const cors = require('cors')
-const morgan = require('morgan')
-const path = require('path')
+const path = require("path");
+const compression = require('compression')
+
+// Security & Middleware
+const helmet = require("helmet");
+const cors = require("cors");
+const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
+const rateLimit = require("express-rate-limit");
+const mongoSanitize = require("express-mongo-sanitize");
+const xss = require("xss-clean");
+
+// Error Handling
 const globalErrorHandler = require("./controllers/errorController");
-const cookieParser = require("cookie-parser")
+/*        CORS CONFIGURATION      */
+app.use(cors({ origin: `${process.env.FRONTEND_URL}`, credentials: true }));
 
-const userRouter = require('./routes/userRoutes')
-const requestRouter = require('./routes/requestRoutes')
-const roomRouter = require('./routes/roomRoutes')
+app.use(compression())
+// Routers
+const userRouter = require("./routes/userRoutes");
+const requestRouter = require("./routes/requestRoutes");
+const roomRouter = require("./routes/roomRoutes");
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Set security HTTP headers
+app.use(helmet());
+
+// Sanitize data against NoSQL query injection
+app.use(mongoSanitize());
+
+// Prevent XSS (Cross-Site Scripting) attacks
+app.use(xss());
+
+// Rate limiting to prevent abuse (200 requests per hour)
+const limiter = rateLimit({
+  max: 2000,
+  windowMs: 60 * 60 * 1000,
+  message: "Too many requests, please try again in an hour!",
+});
+app.use(limiter);
+
+/*        GLOBAL MIDDLEWARES      */
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
+
+// Body parser (limit request body size)
+app.use(express.json({ limit: "10kb" }));
+
+// URL-encoded data parser
+app.use(express.urlencoded({ extended: true }));
+
+// Cookie parser
+app.use(cookieParser());
+
+/*       STATIC FILE SERVING      */
+// Serve static files from 'public' directory
 app.use(express.static(`${__dirname}/public`));
-app.use(cookieParser()); 
-app.use(
-  cors({
-    origin: "http://localhost:5173", 
-    credentials: true, 
-  })
-);
+
+// Serve uploaded images from 'uploads' directory
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
-app.use(morgan("dev")); 
-
+/*            ROUTES              */
 app.use("/users", userRouter);
 app.use("/requests", requestRouter);
-app.use("/rooms", roomRouter)
+app.use("/rooms", roomRouter);
+
+// Global error handling middleware
 app.use(globalErrorHandler);
+
 module.exports = app;

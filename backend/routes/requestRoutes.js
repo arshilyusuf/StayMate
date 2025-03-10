@@ -20,7 +20,7 @@ router.post("/send", protect, async (req, res) => {
     });
 
     if (existingRequest) {
-      return res.status(400).json({ message: "Request already sent." });
+      return res.status(200).json({ message: "Request already sent." });
     }
 
     const request = new Request({
@@ -39,10 +39,10 @@ router.post("/send", protect, async (req, res) => {
 
 router.get("/notifications", protect, async (req, res) => {
   try {
-    console.log("\n🔹 Incoming request to /requests/notifications");
-    console.log("🔹 Cookies received:", req.cookies);
-    console.log("🔹 Headers received:", req.headers);
-    console.log("🔹 Authenticated user ID:", req.user?.id);
+    // console.log("\n🔹 Incoming request to /requests/notifications");
+    // console.log("🔹 Cookies received:", req.cookies);
+    // console.log("🔹 Headers received:", req.headers);
+    // console.log("🔹 Authenticated user ID:", req.user?.id);
 
     if (!req.user?.id) {
       return res

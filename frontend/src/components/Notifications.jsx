@@ -15,18 +15,21 @@ function Notification({ senderId, senderName, requestId, onDelete }) {
 
   const handleDeleteRequest = async () => {
     try {
-      const response = await fetch("http://localhost:8000/requests/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          requestId: requestId,
-          status: "declined",
-        }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/requests/update`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            requestId: requestId,
+            status: "declined",
+          }),
+          credentials: "include",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to decline request");
@@ -61,10 +64,10 @@ export default function Notifications() {
     async function fetchNotifications() {
       try {
         setLoading(true);
-        console.log("Fetching notifications...");
+        
 
         const response = await fetch(
-          "http://localhost:8000/requests/notifications",
+          `${import.meta.env.VITE_BACKEND_BASEURL}/requests/notifications`,
           {
             method: "GET",
             credentials: "include",

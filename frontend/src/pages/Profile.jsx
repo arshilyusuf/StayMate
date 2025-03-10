@@ -8,35 +8,42 @@ import Contact from "../components/Contact";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Loading from "../components/Loading";
+
 export default function Profile() {
   const [filters, setFilters] = useState(null);
-  
-const [filteredUsers, setFilteredUsers] = useState(
- []
-);
-  const {user, loading} = useContext(AuthContext)
 
-  console.log("User Fetched: ",user.name)
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const { user, loading } = useContext(AuthContext);
+
+  
   return (
     <div className={styles.profileContainer}>
-      {!loading ? (<div className={styles.container}>
-        <div className={styles.header}>
-          <h1>Hi, {user?.name?.split(" ")[0]}</h1>
-        </div>
+      {!loading ? (
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <h1>Hi, {user?.name?.split(" ")[0]}</h1>
+          </div>
 
-        <div className={styles.main}>
-          <NearList />
-          <MapContainer filteredUsers={filteredUsers}/>
-        </div>
+          <div className={styles.main}>
+            <NearList />
+            <MapContainer
+              filteredUsers={filteredUsers}
+            />
+          </div>
 
-        <div className={styles.filter}>
-          <SearchByFilter onFilter={setFilters} filteredUsers={filteredUsers} 
-          setFilteredUsers={setFilteredUsers}
-          />
-          {filters && <FilterList filters={filters} />}
+          <div className={styles.filter}>
+            <SearchByFilter
+              onFilter={setFilters}
+              filteredUsers={filteredUsers}
+              setFilteredUsers={setFilteredUsers}
+            />
+            {filters && <FilterList filters={filters} />}
+          </div>
         </div>
-      </div>):(<Loading/>)}
-      
+      ) : (
+        <Loading />
+      )}
+
       <Contact />
     </div>
   );

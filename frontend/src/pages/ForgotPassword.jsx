@@ -23,7 +23,7 @@ export default function ForgotPassword() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/users/forgotPassword",
+        `${import.meta.env.VITE_BACKEND_BASEURL}/users/forgotPassword`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -50,7 +50,7 @@ export default function ForgotPassword() {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/users/resetPassword/${token}`,
+        `${import.meta.env.VITE_BACKEND_BASEURL}/users/resetPassword/${token}`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },

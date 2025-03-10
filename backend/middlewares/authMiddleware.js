@@ -5,7 +5,7 @@ const AppError = require("../utils/appError");
 
 exports.protect = async (req, res, next) => {
   const token = req.cookies?.jwt; 
-console.log("Headers received:", req.headers);
+// console.log("Headers received:", req.headers);
 
   if (!token) {
     return next(new AppError("Not authorized, no token", 401));

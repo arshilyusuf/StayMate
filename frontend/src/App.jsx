@@ -9,7 +9,7 @@ import { AuthContext } from "./context/AuthContext";
 import { useState, useContext, useEffect } from "react";
 import PostProperty from "./pages/PostProperty";
 import ForgotPassword from "./pages/forgotPassword";
-
+import Background from "./components/Background";
 function App() {
   const [showNotif, setShowNotif] = useState(false);
   const [showChat, setShowChat] = useState(false);
@@ -19,6 +19,7 @@ useEffect(() => {
 }, []);
   return (
     <Router>
+      <Background/>
       <Routes>
         <Route
           path="/"
@@ -74,8 +75,8 @@ useEffect(() => {
         />
         <Route path="/signup" element={<SignUp setLoggedIn={setLoggedIn} />} />
         <Route path="/profile/:id" element={<NeighborProfile />} />
-        <Route path="/rooms/post" element={<PostProperty/>} />
-        <Route path="/forgotPassword" element = {<ForgotPassword/>}/>
+        <Route path="/rooms/post" element={<PostProperty />} />
+        <Route path="/forgotPassword" element={<ForgotPassword />} />
       </Routes>
     </Router>
   );

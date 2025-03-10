@@ -6,18 +6,23 @@ import Features from "../components/Features";
 import Reviews from "../components/Reviews";
 import Contact from "../components/Contact";
 import Notifications from "../components/Notifications";
-import Profile from "./Profile"; 
-
+import Profile from "./Profile";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
+import Loading from "../components/Loading";
+import Background from '../components/Background'
 export default function HomePage({
   showNotif,
   setShowNotif,
   loggedIn,
   setLoggedIn,
   showChat,
-  setShowChat
+  setShowChat,
 }) {
+  const { loading } = useContext(AuthContext);
   return (
     <>
+    <Background />
       <NavBar
         setShowNotif={setShowNotif}
         loggedIn={loggedIn}
@@ -25,8 +30,9 @@ export default function HomePage({
         showChat={showChat}
         setShowChat={setShowChat}
       />
-
-      {!loggedIn ? (
+      {loading ? (
+        <Loading />
+      ) : !loggedIn ? (
         <div className={styles.container}>
           <h1 className={styles.heading}>
             Don't know where and with whom to stay? We've Got You.

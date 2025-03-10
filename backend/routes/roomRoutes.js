@@ -6,10 +6,10 @@ const path = require("path");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/"); 
+    cb(null, "uploads/");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); 
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
@@ -17,15 +17,8 @@ const upload = multer({ storage: storage });
 
 router.post("/", upload.array("photos", 4), async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      location,
-      latitude,
-      longitude,
-      price,
-      owner,
-    } = req.body;
+    const { title, description, location, latitude, longitude, price, owner } =
+      req.body;
 
     if (
       !title ||
@@ -42,7 +35,6 @@ router.post("/", upload.array("photos", 4), async (req, res) => {
       });
     }
 
-   
     const photoPaths = req.files.map((file) => `uploads/${file.filename}`);
 
     const newRoom = new Room({
@@ -53,7 +45,7 @@ router.post("/", upload.array("photos", 4), async (req, res) => {
       longitude,
       price,
       owner,
-      photos: photoPaths, 
+      photos: photoPaths,
     });
 
     await newRoom.save();
@@ -62,55 +54,82 @@ router.post("/", upload.array("photos", 4), async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-
 router.get("/", async (req, res) => {
+  let { latitude, longitude, userId, maxDistance, maxPrice } = req.query;
+
+  if (!latitude || !longitude || !userId) {
+    return res.status(400).json({
+      success: false,
+      message: "Latitude, longitude, and userId are required",
+    });
+  }
+
+  latitude = parseFloat(latitude);
+  longitude = parseFloat(longitude);
+  maxDistance = parseFloat(maxDistance) || 10;
+  maxPrice = parseFloat(maxPrice) || 100000;
+
   try {
-    let query = {};
+    // Fetch all rooms except those owned by the user
+    const allRooms = await Room.find({
+      owner: { $ne: userId },
+      price: { $lte: maxPrice },
+    })
+      .populate("owner", "name email phone") // Fetch owner details
+      .lean();
 
-    const page = parseInt(req.query.page) || 1; 
-    const limit = parseInt(req.query.limit) || 5; 
-    const skip = (page - 1) * limit;
+    // Calculate distance and filter rooms within maxDistance
+    const filteredRooms = allRooms
+      .map((room) => {
+        const distance = calculateDistance(
+          latitude,
+          longitude,
+          room.latitude,
+          room.longitude
+        );
+        return { ...room, distance };
+      })
+      .filter((room) => room.distance <= maxDistance)
+      .sort((a, b) => a.distance - b.distance);
 
-    if (req.query.minPrice && req.query.maxPrice) {
-      query.price = {
-        $gte: parseFloat(req.query.minPrice),
-        $lte: parseFloat(req.query.maxPrice),
-      };
+    // console.log(`Total rooms found: ${filteredRooms.length}`);
+
+    // Log first room's owner details for debugging
+    if (filteredRooms.length > 0) {
+      // console.log("First room owner details:", filteredRooms[0].owner);
     }
-
-    
-
-    if (req.query.latitude && req.query.longitude) {
-      const radius = parseFloat(req.query.radius) || 10; 
-      const earthRadius = 6371; 
-
-      query.latitude = {
-        $gte: parseFloat(req.query.latitude) - radius / earthRadius,
-        $lte: parseFloat(req.query.latitude) + radius / earthRadius,
-      };
-      query.longitude = {
-        $gte: parseFloat(req.query.longitude) - radius / earthRadius,
-        $lte: parseFloat(req.query.longitude) + radius / earthRadius,
-      };
-    }
-
-    const rooms = await Room.find(query)
-      .populate("owner", "phone email") 
-      .skip(skip)
-      .limit(limit);
-
-    const totalRooms = await Room.countDocuments(query);
 
     res.json({
       success: true,
-      rooms,
-      totalPages: Math.ceil(totalRooms / limit),
-      currentPage: page,
+      rooms: filteredRooms,
     });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+  } catch (err) {
+    console.error("Error fetching rooms:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+
+router.get("/my", async (req, res) => {
+  try {
+    const { userId } = req.query;
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required" });
+    }
+
+    const userRooms = await Room.find({ owner: userId })
+      .populate("owner", "name email phone") // Populate owner details
+      .lean();
+
+    res.json({ success: true, rooms: userRooms });
+  } catch (err) {
+    console.error("Error fetching user rooms:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+
 
 router.get("/:id", async (req, res) => {
   try {
@@ -151,5 +170,21 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of Earth in km
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) *
+      Math.cos(toRadians(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in km
+}
 
+function toRadians(deg) {
+  return deg * (Math.PI / 180);
+}
 module.exports = router;

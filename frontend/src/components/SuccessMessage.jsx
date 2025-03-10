@@ -5,7 +5,7 @@ export default function SuccessMessage({ message, type = "success", onClose }) {
       useEffect(() => {
             const timer = setTimeout(() => {
                   onClose(); 
-            }, 5000);
+            }, 3500);
             
             return () => clearTimeout(timer); 
       }, [onClose]);

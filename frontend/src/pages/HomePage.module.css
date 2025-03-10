@@ -40,6 +40,9 @@ margin: 3rem 0;  }
     border-left: 2px solid black;
     text-align: center;
   }
+  .container{
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {

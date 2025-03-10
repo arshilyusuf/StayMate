@@ -14,7 +14,7 @@
   color: black;
   border-bottom: none;
   overflow: hidden; 
-  animation: fadeInOut 2s ease-in-out;
+  animation: fadeInOut 3.5s ease-in-out;
   z-index: 3000;
 }
 
@@ -27,7 +27,8 @@
   left: 0;
   height: 5px;
   width: 0;
-  animation: borderGrow 2s linear forwards;
+
+  animation: borderGrow 3.5s linear forwards;
 }
 
 /* Different colors for success and error */

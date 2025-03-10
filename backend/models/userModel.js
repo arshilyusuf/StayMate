@@ -82,6 +82,14 @@ const userSchema = new mongoose.Schema(
     collection: "users",
   }
 );
+
+userSchema.virtual("geoLocation").get(function () {
+  return {
+    type: "Point",
+    coordinates: [this.longitude, this.latitude], 
+  };
+});
+
 //encrypting the password
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

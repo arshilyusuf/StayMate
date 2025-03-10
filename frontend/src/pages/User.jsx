@@ -5,9 +5,11 @@ import Notifications from "../components/Notifications";
 import { AuthContext } from "../context/AuthContext";
 import SetLocationButton from "../components/SetLocationButton"; 
 import { useNavigate } from "react-router-dom";
-
+import SuccessMessage from '../components/SuccessMessage'
 function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
   const DEFAULT_AVATAR = "https://avatar.iran.liara.run/public/41";
+  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
   const { user, logoutUser } = useContext(AuthContext);
   const [looking, setLooking] = useState(user?.lookingForRoommate || true);
   const [isEditing, setIsEditing] = useState(false);
@@ -57,7 +59,6 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
 
   const handleSave = async () => {
     try {
-      console.log("Entered function");
 
       const formData = new FormData();
       formData.append("name", userData.name);
@@ -77,39 +78,59 @@ function User({ showNotif, setShowNotif, setLoggedIn, showChat, setShowChat }) {
         formData.append("photo", photoFile); 
       }
 
-      const response = await fetch("http://localhost:8000/users/update", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/users/update`,
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       const result = await response.json();
-      console.log(result);
 
       if (response.ok) {
-        alert("Profile updated successfully!");
+        // alert("Profile updated successfully!");
+        setSuccessMessage("Profile updated successfully!");
         setIsEditing(false);
         setUser(result.user);
       } else {
-        alert(result.message || "Something went wrong!");
+        // alert(result.message || "Something went wrong!");
+        setError(result.message || "Something went wrong!");
       }
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Error updating profile.");
+      // alert("Error updating profile.");
+      setError("Error updating Profile");
     }
   };
 
   return (
     <>
+      {error && (
+              <SuccessMessage
+                message={error}
+                type="error"
+                onClose={() => setError("")}
+              />
+            )}
+            {successMessage && (
+              <SuccessMessage
+                message={successMessage}
+                type="success"
+                onClose={() => setSuccessMessage("")}
+              />
+            )}
       <NavBar
         setShowNotif={setShowNotif}
         setLoggedIn={setLoggedIn}
         showChat={showChat}
         setShowChat={setShowChat}
       />
+      
       <div className={styles.userContainer}>
         <div className={styles.leftSection}>
           <div className={styles.image}>

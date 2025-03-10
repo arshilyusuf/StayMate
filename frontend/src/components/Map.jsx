@@ -57,9 +57,7 @@ export default function Map({ filteredUsers }) {
   function handlePopUpClick(id) {
     setSelectedUser(users.find((u) => u._id === id));
   }
-console.log("Total Users:", users.length);
-console.log("Filtered Users (within 1000km):", neighborList.length);
-console.log("Neighbor List Data:", neighborList);
+
 
   return (
     <div className={styles.mapContainer}>
@@ -80,9 +78,7 @@ console.log("Neighbor List Data:", neighborList);
           />
           {filteredUsers.length === 0
             ? neighborList.map((neighbor) => {
-              console.log(
-                `Rendering marker for: ${neighbor.name}, Location: (${neighbor.latitude}, ${neighbor.longitude})`
-              );
+              
 
               return (
                 <Marker
@@ -196,6 +192,7 @@ function ResetLocationButton({ position }) {
 
 function NeighborPopup({ user }) {
   const navigate = useNavigate();
+  console.log("Popped for", user.name)
   return (
     <div
       style={{

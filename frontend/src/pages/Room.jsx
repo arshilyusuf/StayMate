@@ -33,7 +33,7 @@ function RoomItem({
     image && image.includes("picsum")
       ? image
       : image
-      ? `http://localhost:8000/${image}`
+      ? `${import.meta.env.VITE_BACKEND_BASEURL}/${image}`
       : DEFAULT_AVATAR;
 
   return (
@@ -53,10 +53,10 @@ function RoomItem({
               {removing?<Loading/>:'Remove'}
             </button>
           ) : (
-            <button className={styles.contactButton}>
+            <div className={styles.contactButton}>
               <p>Phone: {owner?.phone || "N/A"}</p>
               <p>Email: {owner?.email || "N/A"}</p>
-            </button>
+            </div>
           )}
         </div>
       </div>
@@ -77,7 +77,7 @@ function RoomDetailsModal({ room, onClose }) {
         <img
           src={
             room.photos?.[0]
-              ? `http://localhost:8000/${room.photos[0]}`
+              ? `${import.meta.env.VITE_BACKEND_BASEURL}/${room.photos[0]}`
               : DEFAULT_AVATAR
           }
           alt={room.title}
@@ -110,14 +110,19 @@ export default function Room({
   showChat,
   setShowChat,
 }) {
-  const { rooms, setRooms, setPage, hasMore, loading } =
-    useContext(RoomsContext);
+  const {
+    rooms,
+    userRooms,
+    setRooms,
+    setUserRooms,
+    loading,
+  } = useContext(RoomsContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [mapPosition, setMapPosition] = useState(null);
   const [filteredRooms, setFilteredRooms] = useState(rooms);
-  const [removing, setRemoving] = useState(false)
+  const [removing, setRemoving] = useState(false);
 
   useEffect(() => {
     if (user?.latitude && user?.longitude) {
@@ -125,39 +130,47 @@ export default function Room({
     }
   }, [user]);
 
-  const userRooms = rooms.filter((room) => room.owner?._id === user?._id);
+  useEffect(() => {
+    setFilteredRooms(rooms);
+  }, [rooms]);
 
   const handleRemoveProperty = async (roomId) => {
-    
     const confirmDelete = window.confirm(
       "Are you sure you want to remove this property?"
     );
     if (!confirmDelete) return;
 
     try {
-      setRemoving(true)
-      const response = await fetch(`http://localhost:8000/rooms/${roomId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      setRemoving(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/rooms/${roomId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
       if (data.success) {
+        // Remove from both nearby rooms and user's own properties
         setRooms((prevRooms) =>
           prevRooms.filter((room) => room._id !== roomId)
+        );
+        setUserRooms((prevUserRooms) =>
+          prevUserRooms.filter((room) => room._id !== roomId)
         );
       } else {
         alert("Failed to remove property: " + data.message);
       }
     } catch (error) {
       alert("Error removing property: " + error.message);
-    }finally{
-      setRemoving(false)
+    } finally {
+      setRemoving(false);
     }
   };
 
-  if (!user?.latitude || !user?.longitude) return <p>Loading map...</p>;
   if (!mapPosition) return <Loading />;
+  if (!user?.latitude || !user?.longitude) return <p>Loading map...</p>;
 
   return (
     <>
@@ -169,7 +182,7 @@ export default function Room({
         setShowChat={setShowChat}
       />
       <div className={styles.roomContainer}>
-        <SearchRoomsFilter rooms={rooms} setFilteredRooms={setFilteredRooms} />
+        <SearchRoomsFilter setFilteredRooms={setFilteredRooms} />
 
         <div className={styles.container}>
           <div className={styles.headerSection}>
@@ -185,13 +198,13 @@ export default function Room({
           </div>
 
           <div className={styles.allRooms}>
-            {loading ? (
-              <Loading />
-            ) : (
+             
               <div className={styles.othersList}>
-                {filteredRooms.length > 0 ? (
+                {loading?(<Loading/>):(
+                  filteredRooms.length > 0 ? (
                   <>
                     <ul className={styles.roomList}>
+                      {loading && <Loading />}
                       {filteredRooms.map((room) => (
                         <li key={room._id}>
                           <RoomItem
@@ -205,24 +218,13 @@ export default function Room({
                         </li>
                       ))}
                     </ul>
-
-                    {hasMore && !loading && (
-                      <button
-                        className={styles.loadMoreBtn}
-                        onClick={() => setPage((prevPage) => prevPage + 1)}
-                      >
-                        Load More
-                      </button>
-                    )}
-
-                    
-                    {loading && <Loading/>}
                   </>
                 ) : (
                   <NoResultsFound />
-                )}
+                ))}
+                
               </div>
-            )}
+            
 
             <MapContainer center={mapPosition} zoom={12} className={styles.map}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -267,6 +269,7 @@ export default function Room({
                     image={room.photos?.[0]}
                     name={room.title}
                     price={room.price}
+                    owner={room.owner}
                     description={room.description}
                     isMyProperty={true}
                     onDelete={() => handleRemoveProperty(room._id)}

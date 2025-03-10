@@ -1,12 +1,12 @@
 .container{
       padding: 1.5rem 1.5rem;
-      background: rgba(164, 214, 214, 0.367);
+      background: rgba(255, 255, 255, 0.618);
       backdrop-filter: blur(3px);
       border-radius: 1rem;
       width: 100%;
-      margin-top: 1.5rem;
-      height: 26rem;
-      max-height: 26rem;
+      
+      height: 30rem;
+      max-height: 30rem;
       overflow-y: auto;
       box-shadow: 4px 4px 4px rgba(177, 177, 177, 0.566);
 }

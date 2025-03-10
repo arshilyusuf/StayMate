@@ -1,59 +1,44 @@
 import { useState, useEffect, useContext } from "react";
 import styles from "./SearchRoomsFilter.module.css";
 import { AuthContext } from "../context/AuthContext";
+import { RoomsContext } from "../context/RoomsContext";
 
-export default function SearchRoomsFilter({ rooms, setFilteredRooms }) {
+export default function SearchRoomsFilter({ setFilteredRooms }) {
   const { user } = useContext(AuthContext);
-
+const {setLoading} = useContext(RoomsContext);
   const [filters, setFilters] = useState({
     priceRange: 1000,
     distanceRange: 10,
   });
 
   useEffect(() => {
-    applyFilters();
-  }, [filters, rooms, user]); 
+    if (user) fetchFilteredRooms();
+  }, [filters, user]);
 
-  const haversineDistance = (lat1, lon1, lat2, lon2) => {
-    const toRad = (angle) => (Math.PI / 180) * angle;
-    const R = 6371; // Earth's radius in km
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
-  const applyFilters = () => {
-    if (!user || !rooms) return;
-
-    const filtered = rooms.filter((room) => {
-      const isNotOwnProperty = String(room.owner) !== String(user._id);
-      console.log(
-        `Room ID: ${room._id} | Owner: ${room.owner} | User ID: ${user._id} | Included: ${isNotOwnProperty}`
+  const fetchFilteredRooms = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/rooms?latitude=${
+          user.latitude
+        }&longitude=${user.longitude}&userId=${user._id}&maxDistance=${
+          filters.distanceRange
+        }&maxPrice=${filters.priceRange}`,
+        { credentials: "include" }
       );
 
-      const isWithinPrice = room.price <= filters.priceRange;
-      const distance = haversineDistance(
-        user.latitude,
-        user.longitude,
-        room.latitude,
-        room.longitude
-      );
-      const isWithinDistance = distance <= filters.distanceRange;
+      const data = await response.json();
 
-      return isNotOwnProperty && isWithinPrice && isWithinDistance;
-    });
-    const filteredList = filtered.filter((room)=>{
-      return room.owner._id!==user._id
-    })
-    console.log(filteredList)
-    setFilteredRooms(filteredList);
+      if (response.ok) {
+        setFilteredRooms(data.rooms);
+      } else {
+        console.error("Error fetching filtered rooms:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching filtered rooms:", error);
+    }finally{
+      setLoading(false);
+    }
   };
 
   return (

@@ -13,10 +13,10 @@ mongoose
   .then(async (conn) => {
     console.log("DB connected ");
     const dbName = conn.connection.name;
-    console.log("🔹 Using Database:", dbName);
+    console.log("Using Database:", dbName);
 
     const count = await User.countDocuments();
-    console.log(`👥 Total users in DB: ${count}`);
+    console.log(`Total users in DB: ${count}`);
   });
   
   const port = process.env.PORT;

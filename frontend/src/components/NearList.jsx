@@ -1,44 +1,48 @@
 import styles from "./NearList.module.css";
-import { useContext } from "react";
-import { UsersContext } from "../context/UsersContext";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
 import Loading from "./Loading";
 import Neighbor from "./Neighbor";
-import { AuthContext } from "../context/AuthContext";
 import NoResultsFound from "./NoResultsFound";
 
 export default function NearList() {
-  const { users, loading } = useContext(UsersContext);
   const { user } = useContext(AuthContext);
+  const [neighbors, setNeighbors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  function getDistance(lat1, lon1, lat2, lon2) {
-    const earthRadius = 6371; 
+  useEffect(() => {
+    const fetchNearbyUsers = async () => {
+      try {
+        const queryParams = new URLSearchParams({
+          latitude: user.latitude,
+          longitude: user.longitude,
+          distanceRange: 20,
+          userId: user._id, 
+        });
 
-    function toRadians(degrees) {
-      return (degrees * Math.PI) / 180;
-    }
+        const response = await fetch(
+          `${import.meta.env.VITE_BACKEND_BASEURL}/users/search?${queryParams}`,
+          {
+            method: "GET",
+            credentials: "include",
+          }
+        );
 
-    const dLat = toRadians(lat2 - lat1);
-    const dLon = toRadians(lon2 - lon1);
-    const lat1Rad = toRadians(lat1);
-    const lat2Rad = toRadians(lat2);
+        if (!response.ok) {
+          throw new Error("Failed to fetch nearby users");
+        }
 
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1Rad) *
-        Math.cos(lat2Rad) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const data = await response.json();
+        setNeighbors(data);
+      } catch (error) {
+        console.error("Error fetching nearby users:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return earthRadius * c; 
-  }
-
-  const neighborList = users.filter(
-    (u) =>
-      u.lookingForRoommate === true &&
-      u._id !== user._id &&
-      getDistance(user.latitude, user.longitude, u.latitude, u.longitude) <= 20
-  );
+    fetchNearbyUsers();
+  }, [user?.latitude, user?.longitude]);
 
   return (
     <div className={styles.container}>
@@ -46,15 +50,19 @@ export default function NearList() {
         <Loading />
       ) : (
         <>
-          <h3 style={{color:'black'}}>People around you looking for Roommates (within 20km)</h3>
-          {neighborList.length ? (
+          <h3 style={{ color: "black" }}>
+            People around you looking for Roommates (within 20km)
+          </h3>
+          {neighbors.length ? (
             <ul className={styles.nearList}>
-              {neighborList.map((neighbor) => (
+              {neighbors.map((neighbor) => (
                 <Neighbor key={neighbor._id} user={neighbor} />
               ))}
             </ul>
           ) : (
-            <p style={{ fontSize: "1.5rem", color: "gray" }}><NoResultsFound/></p>
+            <div style={{ fontSize: "1.5rem", color: "gray" }}>
+              <NoResultsFound />
+            </div>
           )}
         </>
       )}

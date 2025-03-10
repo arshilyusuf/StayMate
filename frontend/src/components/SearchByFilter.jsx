@@ -4,10 +4,9 @@ import { UsersContext } from "../context/UsersContext";
 import { AuthContext } from "../context/AuthContext";
 import FilterList from "./FilterList";
 
-export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
-  const { users } = useContext(UsersContext);
+export default function SearchByFilter({ filteredUsers, setFilteredUsers }) {
   const { user } = useContext(AuthContext);
-  
+
   const initialFilter = {
     searchQuery: "",
     gender: "",
@@ -17,116 +16,103 @@ export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
     locationQuery: "",
   };
 
-   const [filters, setFilters] = useState(
-     JSON.parse(localStorage.getItem("filters")) || initialFilter
-   );
-   
-   const [showFilteredUsers, setShowFilteredUsers] = useState(
-     JSON.parse(localStorage.getItem("showFilteredUsers")) || false
-   );
+  const [filters, setFilters] = useState(
+    JSON.parse(localStorage.getItem("filters")) || initialFilter
+  );
+  const [showFilteredUsers, setShowFilteredUsers] = useState(
+    JSON.parse(localStorage.getItem("showFilteredUsers")) || false
+  );
+  const [loading, setLoading] = useState(false); // Loading state
 
-   useEffect(() => {
-     const storedUsers = JSON.parse(localStorage.getItem("filteredUsers"));
-     if (storedUsers) {
-       setFilteredUsers(storedUsers);
-       setShowFilteredUsers(true);
-     }
-   }, []);
+  useEffect(() => {
+    const storedUsers = JSON.parse(localStorage.getItem("filteredUsers"));
+    if (storedUsers) {
+      setFilteredUsers(storedUsers);
+      setShowFilteredUsers(true);
+    }
+  }, []);
 
-   useEffect(() => {
-     localStorage.setItem("filters", JSON.stringify(filters));
-     localStorage.setItem(
-       "showFilteredUsers",
-       JSON.stringify(showFilteredUsers)
-     );
-   }, [filters, showFilteredUsers]);
-   
-   useEffect(() => {
-     const storedTimestamp = localStorage.getItem("filterTimestamp");
+  useEffect(() => {
+    localStorage.setItem("filters", JSON.stringify(filters));
+    localStorage.setItem(
+      "showFilteredUsers",
+      JSON.stringify(showFilteredUsers)
+    );
+  }, [filters, showFilteredUsers]);
 
-     if (storedTimestamp) {
-       const currentTime = Date.now();
-       if (currentTime - storedTimestamp > 5 * 60 * 1000) {
-         // 5 minutes
-         clearFilters();
-       }
-     }
-   }, []);
-   useEffect(() => {
-     if (filteredUsers.length > 0) {
-       localStorage.setItem("filteredUsers", JSON.stringify(filteredUsers));
-       localStorage.setItem("filterTimestamp", Date.now()); // Save timestamp
-     }
-   }, [filteredUsers]);
+  useEffect(() => {
+    const storedTimestamp = localStorage.getItem("filterTimestamp");
+    if (storedTimestamp) {
+      const currentTime = Date.now();
+      if (currentTime - storedTimestamp > 5 * 60 * 1000) {
+        clearFilters();
+      }
+    }
+  }, []);
 
+  useEffect(() => {
+    if (filteredUsers.length > 0) {
+      localStorage.setItem("filteredUsers", JSON.stringify(filteredUsers));
+      localStorage.setItem("filterTimestamp", Date.now());
+    }
+  }, [filteredUsers]);
 
-   
- const handleChange = (e) => {
-   const { name, value } = e.target;
-
-   setFilters((prev) => ({
-     ...prev,
-     [name]: name === "distanceRange" ? Number(value) : value,
-     ...(name === "locationQuery" && value !== "" ? { distanceRange: 2 } : {}),
-     ...(name === "distanceRange" && value !== "" ? { locationQuery: "" } : {}),
-   }));
- };
-
-  const haversineDistance = (lat1, lon1, lat2, lon2) => {
-    const toRad = (angle) => (Math.PI / 180) * angle;
-    const R = 6371; // Radius of Earth in km
-
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: name === "distanceRange" ? Number(value) : value,
+      ...(name === "locationQuery" && value !== "" ? { distanceRange: 2 } : {}),
+      ...(name === "distanceRange" && value !== ""
+        ? { locationQuery: "" }
+        : {}),
+    }));
   };
 
-  const applyFilters = () => {
-    let result = users.filter((u) => {
-      let isWithinDistance = true;
-      let matchesLocationQuery = true;
-
-      if (filters.locationQuery) {
-        matchesLocationQuery = u.location
-          .toLowerCase()
-          .includes(filters.locationQuery.toLowerCase());
-      } else if (filters.distanceRange) {
-        const distance = haversineDistance(
-          user.latitude,
-          user.longitude,
-          u.latitude,
-          u.longitude
-        );
-        isWithinDistance = distance <= filters.distanceRange;
+  const applyFilters = async () => {
+    try {
+      if (!user?.latitude || !user?.longitude) {
+        console.error("User location is missing. Cannot filter by distance.");
+        return;
       }
 
-      return (
-        u._id !== user._id &&
-        (filters.searchQuery === "" ||
-          u.name.toLowerCase().includes(filters.searchQuery.toLowerCase())) &&
-        matchesLocationQuery &&
-        isWithinDistance &&
-        (filters.gender === "" || u.gender === filters.gender) &&
-        (filters.ageRange === "" || u.age >= filters.ageRange) &&
-        (filters.dietaryPreference === "" ||
-          u.dietaryPreference.toLowerCase() ===
-            filters.dietaryPreference.toLowerCase())
+      setLoading(true); // Start loading
+
+      const queryParams = new URLSearchParams({
+        searchQuery: filters.searchQuery || "",
+        gender: filters.gender || "",
+        ageRange: filters.ageRange || "",
+        distanceRange: filters.distanceRange || "",
+        dietaryPreference: filters.dietaryPreference || "",
+        locationQuery: filters.locationQuery || "",
+        latitude: user.latitude,
+        longitude: user.longitude,
+        userId:user._id
+      });
+
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/users/search?${queryParams}`,
+        {
+          credentials: "include",
+        }
       );
-    });
- 
-    setFilteredUsers(result);
-    setShowFilteredUsers(true);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch filtered users");
+      }
+
+      const data = await response.json();
+      setFilteredUsers(data);
+      setShowFilteredUsers(true);
+    } catch (error) {
+      console.error("Error fetching filtered users:", error);
+    } finally {
+      setLoading(false); 
+    }
   };
 
   const clearFilters = () => {
-    setFilters(initialFilter);
+    
     setFilteredUsers([]);
     setShowFilteredUsers(false);
     localStorage.removeItem("filters");
@@ -165,9 +151,9 @@ export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
           <input
             type="range"
             name="distanceRange"
-            min="2"
+            min="1"
             max="100"
-            value={filters.distanceRange || 1} // Prevent empty string issue
+            value={filters.distanceRange || 1}
             onChange={handleChange}
             disabled={filters.locationQuery !== ""}
           />
@@ -207,7 +193,9 @@ export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
           </select>
         </div>
         <div className={styles.buttons}>
-          <button onClick={applyFilters}>Apply Filters</button>
+          <button onClick={applyFilters} disabled={loading}>
+            {loading ? "Loading..." : "Apply Filters"}
+          </button>
           <button
             onClick={clearFilters}
             className={styles.clearButton}
@@ -217,8 +205,8 @@ export default function SearchByFilter({filteredUsers, setFilteredUsers}) {
           </button>
         </div>
       </div>
-
-      {showFilteredUsers && <FilterList users={filteredUsers} />}
+      {loading && <p>Loading filtered users...</p>}
+      {showFilteredUsers && !loading && <FilterList users={filteredUsers} />}
     </div>
   );
 }

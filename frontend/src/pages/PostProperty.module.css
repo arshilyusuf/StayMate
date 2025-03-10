@@ -180,6 +180,7 @@ textarea {
   border: none;
   background-color: rgb(238, 238, 238);
   transition: 0.3s all ease;
+  color: black;
 }
 .post:hover{
   background-color: cadetblue;

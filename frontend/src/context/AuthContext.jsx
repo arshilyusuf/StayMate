@@ -5,24 +5,26 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
-      const [loading, setLoading] = useState(false);
-      
+  const [loading, setLoading] = useState(true); // Ensure initial loading state
 
+  // ✅ Function to check if user is authenticated
   const checkAuthStatus = async () => {
     try {
-      setLoading(true);
-      const response = await fetch("http://localhost:8000/users/me", {
-        method: "GET",
-        credentials: "include", 
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/users/me`,
+        {
+          method: "GET",
+          credentials: "include", // Send cookies
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
-        console.log("✅ User authenticated:", data.user);
+        // console.log("✅ User authenticated:", data.user);
         setUser(data.user);
         setLoggedIn(true);
       } else {
-        console.log("❌ User not authenticated.");
+        // console.log("❌ User not authenticated.");
         setUser(null);
         setLoggedIn(false);
       }
@@ -30,88 +32,79 @@ export const AuthProvider = ({ children }) => {
       console.error("⚠️ Error checking auth status:", error);
       setUser(null);
       setLoggedIn(false);
-    }finally{
-      setLoading(false);
+    } finally {
+      setLoading(false); // Done loading
     }
   };
 
-
+  // ✅ Run authentication check on page load
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (storedToken && storedUser) {
-      setUser(JSON.parse(storedUser));
-      setLoggedIn(true); 
-    } else {
-      checkAuthStatus(); 
-    }
+    checkAuthStatus();
   }, []);
 
-
-
+  // ✅ Login function
   const loginUser = async (email, password) => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8000/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include", 
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_BACKEND_BASEURL}/users/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Login failed");
 
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      console.log("🔹 Login successful:", data.user);
+      // console.log("🔹 Login successful:", data.user);
       setUser(data.user);
       setLoggedIn(true);
-
-      return data; 
+      return data;
     } catch (error) {
       console.error("❌ Login failed:", error.message);
       throw error;
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
+  // ✅ Logout function
+  const logoutUser = async () => {
+    if (!window.confirm("Are you sure you want to log out?")) return;
 
-const logoutUser = async () => {
-  const confirmLogout = window.confirm("Are you sure you want to log out?");
+    try {
+      setLoading(true);
+      await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/users/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
 
-  if (!confirmLogout) return;
-
-  try {
-    setLoading(true);
-    await fetch("http://localhost:8000/users/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-
-    console.log("🔹 Logged out successfully");
-    setUser(null); 
-    setLoggedIn(false); 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("filters");
-    localStorage.removeItem("filteredUsers");
-    localStorage.removeItem("showFilteredUsers");
-    localStorage.removeItem("filterTimestamp");
-  } catch (error) {
-    console.error("⚠️ Logout error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
-
+      // console.log("🔹 Logged out successfully");
+      setUser(null);
+      setLoggedIn(false);
+    } catch (error) {
+      console.error("⚠️ Logout error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, loggedIn,setLoggedIn, loginUser, logoutUser, loading }}>
-      {children}
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        loggedIn,
+        setLoggedIn,
+        loginUser,
+        logoutUser,
+        loading,
+      }}
+    >
+      {!loading && children} {/* Prevent UI flicker while loading */}
     </AuthContext.Provider>
   );
 };

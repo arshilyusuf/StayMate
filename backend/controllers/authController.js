@@ -135,7 +135,7 @@ exports.update = catchAsync(async (req, res, next) => {
     return next(new AppError("User not found", 404));
   }
 
-  console.log("User updated:", updatedUser);
+  // console.log("User updated:", updatedUser);
 
   res.status(200).json({
     status: "Profile Updated Successfully!",
@@ -163,11 +163,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     "host"
   )}/users/resetPassword/${resetToken}`;
 
-  const message = `Forgot your password? Submit a PATCH request with youre new password and passwordConfirm to: ${resetURL}.\n Please ignore this email if you didn't forget your password.`;
+  const message = `Forgot your password? here is your token valid for only 10 minutes: ${resetToken}.\n Please ignore this email if you didn't forget your password.`;
   try {
     await sendEmail({
       email: user.email,
-      subject: "Your password reset token (Valid for 10 min)",
+      subject: "Password Reset Request",
       message,
     });
 
@@ -191,15 +191,15 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     .update(req.params.token)
     .digest("hex");
 
-    console.log("Received Token:", req.params.token);
-    console.log("Hashed Token:", hashedToken);
+    // console.log("Received Token:", req.params.token);
+    // console.log("Hashed Token:", hashedToken);
 
   const user = await User.findOne({
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
 
-  console.log("User Found:", user);
+  // console.log("User Found:", user);
   if(!user){
     return next(new AppError("Invalid token or expired", 400));
   }

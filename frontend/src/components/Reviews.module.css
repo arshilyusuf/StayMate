@@ -4,7 +4,8 @@
       justify-content: center;
       align-items: center;
       list-style-type: none;
-      padding: 2rem;
+     
+      
 }
 .reviewContainer{
       background: linear-gradient(45deg, rgba(172, 225, 225, 0.7), rgb(39, 148, 151), rgba(0, 50, 50, 0.894));
@@ -51,6 +52,9 @@
 .details{
       padding-right: 2rem;
 }
+.reviewContainer h3{
+  margin-bottom: 2rem;
+}
 @media (max-width: 768px) {
   .review {
     flex-direction: column; /* Stack image and text */
@@ -61,6 +65,7 @@
     border-left: none; /* Remove left border */
     border-top: 1rem solid rgb(44, 74, 75); /* Use top border instead */
     border-radius: 2rem;
+
   }
 
   .image img {

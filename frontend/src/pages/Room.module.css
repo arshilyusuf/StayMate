@@ -1,7 +1,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  background-color: rgba(228, 228, 228, 0.706);
+  background-color: rgba(255, 255, 255, 0.882);
   padding: 1rem;
   border-radius: 1rem;
 }
@@ -46,7 +46,7 @@
   display: flex;
   gap: 1.5rem;
   border-radius: 1rem;
-  height: 10rem;
+  
 }
 
 .rightSection {
@@ -56,10 +56,13 @@
 }
 
 .roomItem img {
-  width: 10rem;
+  
   height: 10rem;
+  width: auto;
   object-fit: cover;
   border-radius: 1rem;
+  max-height: 20rem;
+  overflow-y: auto;
 }
 
 .details {
@@ -77,6 +80,11 @@
 .leftSection h3 {
   font-size: 1.5rem;
   font-weight: 700;
+  color:black
+}
+.loadMoreBtn{
+  margin-top: 1rem;
+  width: 100%;
 }
 
 .leftSection h4 {
@@ -94,7 +102,9 @@
   padding: 0.25rem 0.75rem;
   border-radius: 0.5rem;
   color: white;
-  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  margin-left: 1rem;
+  
 }
 
 .headerSection {
@@ -103,7 +113,7 @@
 }
 
 .myProperties {
-  background-color: rgba(95, 158, 160, 0.292);
+  background-color: rgb(255, 255, 255);
   padding: 1rem 2rem;
   border-radius: 1rem;
 }
@@ -116,6 +126,7 @@
 .othersList {
   background-color: rgba(187, 205, 206, 0.412);
   padding: 1rem 1rem;
+  position:relative;
   border-radius: 1rem;
   height: 80vh;
   max-height: 80vh;
@@ -324,6 +335,51 @@
     width: 100%;
   }
 }
+@media (max-width: 600px) {
+  .roomItem {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    box-sizing: border-box;
+  }
+
+  .roomItem img {
+    width: 100%;
+    height: auto;
+    max-height: 15rem;
+    object-fit: cover;
+  }
+
+  .details {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .leftSection h3 {
+    font-size: 1.1rem;
+  }
+
+  .leftSection h4 {
+    font-size: 1rem;
+  }
+
+  .leftSection p {
+    font-size: 0.9rem;
+  }
+
+  .contactButton {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
+  }
+
+  .removeButton {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 
 @media (max-width: 480px) {
   .roomItem {
