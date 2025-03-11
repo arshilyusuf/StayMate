@@ -19,7 +19,7 @@ router.get("/me", protect, async (req, res) => {
 router.get("/search", userController.search)
 router
   .route("/")
-  .get(userController.getAllUsers)
+  .get(protect, userController.getAllUsers)
   .post(userController.createUser);
 
 router
