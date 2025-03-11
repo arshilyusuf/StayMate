@@ -79,7 +79,11 @@ exports.login = catchAsync(async (req, res, next) => {
   res
     .cookie("jwt", token, {
       httpOnly: true,
+<<<<<<< HEAD
       secure: process.env.NODE_ENV === "production" ? true : false,
+=======
+      secure: process.env.NODE_ENV==='production',
+>>>>>>> 4793fb9 (Changes to dist)
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
@@ -236,7 +240,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   res
     .cookie("jwt", token, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV==='production',
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })

@@ -7,7 +7,6 @@ export const AuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true); // Ensure initial loading state
 
-  // ✅ Function to check if user is authenticated
   const checkAuthStatus = async () => {
     try {
       const response = await fetch(
