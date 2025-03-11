@@ -8,6 +8,9 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import NoResultsFound from "../components/NoResultsFound";
 import SearchRoomsFilter from "../components/SearchRoomsFilter";
+import L from "leaflet";
+
+
 import {
   MapContainer,
   TileLayer,
