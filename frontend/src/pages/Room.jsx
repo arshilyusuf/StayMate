@@ -126,19 +126,11 @@ export default function Room({
   const [filteredRooms, setFilteredRooms] = useState(rooms);
   const [removing, setRemoving] = useState(false);
   const customIcon = L.icon({
-<<<<<<< HEAD
       iconUrl: '/assets/pictures/location.png', // Replace with the actual image URL
       iconSize: [40, 40], // Size of the icon
       iconAnchor: [20, 40], // The point of the icon which will correspond to the marker's location
       popupAnchor: [0, -40], // Position of the popup
     });
-=======
-    iconUrl: '/assets/pictures/location.png',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40], 
-    popupAnchor: [0, -40], 
-  });
->>>>>>> c4c6ed7e5162f52bab84d9faed874a2fdad02780
   useEffect(() => {
     if (user?.latitude && user?.longitude) {
       setMapPosition([user.latitude, user.longitude]);
