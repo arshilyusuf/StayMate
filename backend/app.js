@@ -11,11 +11,15 @@ const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
+const globalErrorHandler = require("./controllers/errorController");
 
+app.use((req, res, next) => {
+  console.log(req.headers); 
+  next();
+})
 app.set('trust proxy', 1);  
 app.use(compression())
 // Error Handling
-const globalErrorHandler = require("./controllers/errorController");
 /*        CORS CONFIGURATION      */
 const corsOptions = {
   origin: 'https://stay-mate-frontend.vercel.app',  
@@ -23,9 +27,10 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
-
 // Apply CORS middleware
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); 
+
 
 // Routers
 const userRouter = require("./routes/userRoutes");
