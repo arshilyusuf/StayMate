@@ -1,4 +1,3 @@
-import styles from "./Map.module.css";
 import { useState, useEffect, useContext } from "react";
 import {
   MapContainer,
@@ -8,16 +7,30 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
+import L from "leaflet"; // Import Leaflet for custom icons
 import { AuthContext } from "../context/AuthContext";
 import { UsersContext } from "../context/UsersContext";
 import Loading from "./Loading";
 import { useNavigate } from "react-router-dom";
+import styles from "./Map.module.css";
 
 export default function Map({ filteredUsers }) {
   const { user } = useContext(AuthContext);
   const { users, loading } = useContext(UsersContext);
   const [mapPosition, setMapPosition] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+
+  useEffect(() => {
+    if (user?.latitude && user?.longitude) {
+      setMapPosition([user.latitude, user.longitude]);
+    }
+  }, [user]);
+
+  const neighborList = users.filter(
+    (neighbor) =>
+      isInRange(neighbor.latitude, neighbor.longitude, 20) &&
+      neighbor._id !== user._id
+  );
 
   function isInRange(latitude, longitude, radius) {
     const earthRadius = 6371;
@@ -39,25 +52,20 @@ export default function Map({ filteredUsers }) {
     return distance <= radius;
   }
 
-  useEffect(() => {
-    if (user?.latitude && user?.longitude) {
-      setMapPosition([user.latitude, user.longitude]);
-    }
-  }, [user]);
-
   if (!user?.latitude || !user?.longitude) return <p>Loading map...</p>;
   if (!mapPosition) return <Loading />;
-
-  const neighborList = users.filter(
-    (neighbor) =>
-      isInRange(neighbor.latitude, neighbor.longitude, 20) &&
-      neighbor._id !== user._id
-  );
 
   function handlePopUpClick(id) {
     setSelectedUser(users.find((u) => u._id === id));
   }
 
+  // Create a custom icon for the markers
+  const customIcon = L.icon({
+    iconUrl: '/assets/pictures/location.png', // Replace with the actual image URL
+    iconSize: [40, 40], // Size of the icon
+    iconAnchor: [20, 40], // The point of the icon which will correspond to the marker's location
+    popupAnchor: [0, -40], // Position of the popup
+  });
 
   return (
     <div className={styles.mapContainer}>
@@ -78,42 +86,41 @@ export default function Map({ filteredUsers }) {
           />
           {filteredUsers.length === 0
             ? neighborList.map((neighbor) => {
-              
-
-              return (
-                <Marker
-                  key={neighbor._id}
-                  position={[neighbor.latitude, neighbor.longitude]}
-                >
-                  <Popup>
-                    <h3
-                      onClick={() => handlePopUpClick(neighbor._id)}
-                      style={{
-                        backgroundColor:
-                          neighbor.gender === "male"
-                            ? "rgb(126, 202, 223)"
-                            : neighbor.gender === "female"
-                            ? "rgba(255, 144, 227, 0.6)"
-                            : "rgba(200, 196, 196, 0.75)",
-                        padding: "0.3rem 0.5rem",
-                        borderRadius: "0.5rem",
-                        cursor: "pointer",
-                      }}
-                    >
-                      {neighbor.name}
-                    </h3>
-                    <br />
-                    {neighbor.age} <br />
-                    {neighbor.occupation}
-                  </Popup>
-                </Marker>
-              );
-                
-})
+                return (
+                  <Marker
+                    key={neighbor._id}
+                    position={[neighbor.latitude, neighbor.longitude]}
+                    icon={customIcon} 
+                  >
+                    <Popup>
+                      <h3
+                        onClick={() => handlePopUpClick(neighbor._id)}
+                        style={{
+                          backgroundColor:
+                            neighbor.gender === "male"
+                              ? "rgb(126, 202, 223)"
+                              : neighbor.gender === "female"
+                              ? "rgba(255, 144, 227, 0.6)"
+                              : "rgba(200, 196, 196, 0.75)",
+                          padding: "0.3rem 0.5rem",
+                          borderRadius: "0.5rem",
+                          cursor: "pointer",
+                        }}
+                      >
+                        {neighbor.name}
+                      </h3>
+                      <br />
+                      {neighbor.age} <br />
+                      {neighbor.occupation}
+                    </Popup>
+                  </Marker>
+                );
+              })
             : filteredUsers.map((neighbor) => (
                 <Marker
                   key={neighbor._id}
                   position={[neighbor.latitude, neighbor.longitude]}
+                  icon={customIcon} // Apply the custom icon
                 >
                   <Popup>
                     <h3
@@ -138,7 +145,6 @@ export default function Map({ filteredUsers }) {
                   </Popup>
                 </Marker>
               ))}
-
           <DetectMapClick onClick={() => setSelectedUser(null)} />
 
           {user && (
@@ -159,6 +165,7 @@ export default function Map({ filteredUsers }) {
   );
 }
 
+// Detect Map Click
 function DetectMapClick({ onClick }) {
   useMapEvents({
     click: onClick,
@@ -166,6 +173,7 @@ function DetectMapClick({ onClick }) {
   return null;
 }
 
+// Reset Location Button
 function ResetLocationButton({ position }) {
   const map = useMap();
   return (
@@ -192,7 +200,6 @@ function ResetLocationButton({ position }) {
 
 function NeighborPopup({ user }) {
   const navigate = useNavigate();
-  console.log("Popped for", user.name)
   return (
     <div
       style={{
@@ -224,7 +231,6 @@ function NeighborPopup({ user }) {
           objectFit: "cover",
         }}
       />
-
       <div style={{ flex: 1 }}>
         <h4 style={{ margin: "0 0 5px", fontSize: "1.1rem" }}>
           {user.name}, {user.age}

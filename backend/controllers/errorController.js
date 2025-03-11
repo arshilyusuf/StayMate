@@ -51,11 +51,7 @@ const sendErrorProd = (err, res) => {
     // 2) Send generic message
     res.status(500).json({
       status: "error",
-<<<<<<< HEAD
       message: err.message,
-=======
-      message: err,
->>>>>>> 4793fb9 (Changes to dist)
     });
   }
 };
