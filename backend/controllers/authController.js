@@ -60,7 +60,7 @@ exports.login = catchAsync(async (req, res, next) => {
     .cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV==='production',
-      sameSite: "strict",
+      sameSite: "None",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 
@@ -85,7 +85,7 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage,limits: { fileSize: 50 * 1024 * 1024 } });
 
 exports.update = catchAsync(async (req, res, next) => {
   const allowedFields = [
