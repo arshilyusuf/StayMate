@@ -35,7 +35,12 @@ function RoomItem({
       : image
       ? `${import.meta.env.VITE_BACKEND_BASEURL}/${image}`
       : DEFAULT_AVATAR;
-
+  const customIcon = L.icon({
+    iconUrl: '/assets/pictures/location.png',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40], 
+    popupAnchor: [0, -40], 
+  });
   return (
     <div className={styles.roomItem}>
       <div>
@@ -232,6 +237,7 @@ export default function Room({
                 <Marker
                   key={room._id}
                   position={[room.latitude, room.longitude]}
+                  icon={customIcon}
                 >
                   <Popup>
                     <div>
