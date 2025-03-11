@@ -38,12 +38,7 @@ function RoomItem({
       : image
       ? `${import.meta.env.VITE_BACKEND_BASEURL}/${image}`
       : DEFAULT_AVATAR;
-  const customIcon = L.icon({
-    iconUrl: '/assets/pictures/location.png',
-    iconSize: [40, 40],
-    iconAnchor: [20, 40], 
-    popupAnchor: [0, -40], 
-  });
+  
   return (
     <div className={styles.roomItem}>
       <div>
@@ -131,7 +126,12 @@ export default function Room({
   const [mapPosition, setMapPosition] = useState(null);
   const [filteredRooms, setFilteredRooms] = useState(rooms);
   const [removing, setRemoving] = useState(false);
-
+  const customIcon = L.icon({
+    iconUrl: '/assets/pictures/location.png',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40], 
+    popupAnchor: [0, -40], 
+  });
   useEffect(() => {
     if (user?.latitude && user?.longitude) {
       setMapPosition([user.latitude, user.longitude]);
