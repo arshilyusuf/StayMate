@@ -7,7 +7,7 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import L from "leaflet"; // Import Leaflet for custom icons
+import L from "leaflet"; 
 import { AuthContext } from "../context/AuthContext";
 import { UsersContext } from "../context/UsersContext";
 import Loading from "./Loading";

@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import Loading from "../components/Loading";
 import NoResultsFound from "../components/NoResultsFound";
 import SearchRoomsFilter from "../components/SearchRoomsFilter";
+import L from "leaflet"; 
+
 import {
   MapContainer,
   TileLayer,
@@ -123,7 +125,12 @@ export default function Room({
   const [mapPosition, setMapPosition] = useState(null);
   const [filteredRooms, setFilteredRooms] = useState(rooms);
   const [removing, setRemoving] = useState(false);
-
+  const customIcon = L.icon({
+      iconUrl: '/assets/pictures/location.png', // Replace with the actual image URL
+      iconSize: [40, 40], // Size of the icon
+      iconAnchor: [20, 40], // The point of the icon which will correspond to the marker's location
+      popupAnchor: [0, -40], // Position of the popup
+    });
   useEffect(() => {
     if (user?.latitude && user?.longitude) {
       setMapPosition([user.latitude, user.longitude]);
@@ -232,6 +239,7 @@ export default function Room({
                 <Marker
                   key={room._id}
                   position={[room.latitude, room.longitude]}
+                  icon={customIcon}
                 >
                   <Popup>
                     <div>
