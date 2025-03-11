@@ -85,7 +85,7 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage,limits: { fileSize: 50 * 1024 * 1024 } });
 
 exports.update = catchAsync(async (req, res, next) => {
   const allowedFields = [
