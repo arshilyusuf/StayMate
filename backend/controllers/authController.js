@@ -46,55 +46,30 @@ exports.signup = catchAsync(async (req, res) => {
 
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-
   if (!email || !password) {
-    console.log("Email or password is missing:", { email, password });
     return next(new AppError("Please provide email and password", 400));
   }
-
-  console.log("Received email and password:", { email, password });
-
   const user = await User.findOne({ email }).select("+password");
 
-  if (!user) {
-    console.log("User not found:", email);
+  if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect email or password", 401));
   }
-
-  console.log("User found:", user);
-
-  const passwordIsCorrect = await user.correctPassword(password, user.password);
-  console.log("Password verification result:", passwordIsCorrect);
-
-  if (!passwordIsCorrect) {
-    console.log("Password is incorrect:", { email });
-    return next(new AppError("Incorrect email or password", 401));
-  }
-
   user.password = undefined;
-
   const token = signToken(user._id);
-  console.log("Generated token:", token);
-
   res
     .cookie("jwt", token, {
       httpOnly: true,
-<<<<<<< HEAD
-      secure: process.env.NODE_ENV === "production" ? true : false,
-=======
       secure: process.env.NODE_ENV==='production',
->>>>>>> 4793fb9 (Changes to dist)
       sameSite: "strict",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     })
+
     .status(200)
     .json({
       status: "Login Successful!",
       token,
       user,
     });
-
-  console.log("Cookie set and response sent successfully");
 });
 
 exports.logout = (req, res) => {

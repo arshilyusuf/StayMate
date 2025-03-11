@@ -10,15 +10,7 @@
   "rewrites": [
     {
       "src": "/(.*)",
-<<<<<<< HEAD
-      "dest": "app.js",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://stay-mate-frontend.vercel.app",
-        "Access-Control-Allow-Credentials": "true"
-      }
-=======
       "dest": "/$1"
->>>>>>> 4793fb9 (Changes to dist)
     }
   ]
 }
