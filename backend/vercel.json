@@ -7,7 +7,7 @@
       "config": { "includeFiles": ["dist/**"] }
     }
   ],
-  "rewrites": [
+  "routes": [
     {
       "src": "/(.*)",
       "dest": "/$1"
